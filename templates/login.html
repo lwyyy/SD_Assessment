@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FG Warband</title>
+    <script type="text/javascript">
+
+        function addCookie(name, value, expireHours) {
+            var cookieString = name + "=" + escape(value);
+
+            if (expireHours > 0) {
+                var date = new Date();
+                date.setTime(date.getTime + expireHours * 3600 * 1000);
+                cookieString = cookieString + "; expire=" + date.toGMTString();
+            }
+            document.cookie = cookieString;
+        }
+
+        function doFormSubmit() {
+
+            var user_name = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var flag = 0;
+
+            flag = 0;
+            {% for name, pass in users.items() %}
+                if ( user_name == "{{ name }}" ){
+                    if (password == "{{ pass }}") {
+                        flag = 1;
+                    }else {
+                        flag = 2;
+                    }
+                }
+            {% endfor %}
+
+
+
+            if (flag == 2) {
+                alert("password wrong!");
+                window.location.href = "/";
+            } else if (flag == 1) {
+                addCookie('username', user_name, 1000);
+
+                alert("login successful!");
+                window.location.href = "/index";
+            } else {
+                alert("user non-exist!");
+                window.location.href = "/";
+            }
+        }
+    </script>
+</head>
+<body>
+<h1> FG Warband Manager </h1>
+<p>
+    Please login if you have account.
+    Please register if you are a new user.
+</p>
+<table>
+    <tr>
+        <td>Username</td>
+        <td>
+            <input type="text" id="username" name="username">
+        </td>
+    </tr>
+    <tr>
+        <td>Password</td>
+        <td>
+            <input type="password" id="password" name="password">
+        </td>
+    </tr>
+</table>
+<br/>
+<input id="login" type="button" value="Login" onclick="doFormSubmit();"/>
+&nbsp;&nbsp;
+<button onclick="window.location.href='/register'">Register</button>
+</body>
+</html>

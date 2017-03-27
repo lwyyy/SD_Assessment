@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Holder Page</title>
+
+    <script type="text/javascript">
+        function getCookie(name) {
+            var strCookie = document.cookie;
+            var arrCookie = strCookie.split("; ");
+            for (var i = 0; i < arrCookie.length; i++) {
+                var arr = arrCookie[i].split("=");
+                if (arr[0] == name)return arr[1];
+            }
+            return "";
+        }
+
+        function addCookie(name, value, expireHours) {
+            var cookieString = name + "=" + escape(value);
+
+            if (expireHours > 0) {
+                var date = new Date();
+                date.setTime(date.getTime + expireHours * 3600 * 1000);
+                cookieString = cookieString + "; expire=" + date.toGMTString();
+            }
+            document.cookie = cookieString;
+        }
+
+        if (getCookie("username") == "") {
+            window.location.href='/'
+        }
+
+        function logout() {
+            addCookie('username', "", 1000);
+            window.location.href='/'
+        }
+    </script>
+</head>
+<body>
+<h1> FG Warband Manager </h1>
+<p>
+    This bit will include the endpoints and some links to information.
+</p>
+<table>
+    <tr>
+        <td>New Warband: </td>
+        <td>
+            <button onclick="window.location.href='/new'">New</button>
+        </td>
+    </tr>
+    <tr>
+        <td>Edit Warband:</td>
+        <td>
+            <button onclick="window.location.href='/edit'">Load Existing</button>
+        </td>
+    </tr>
+    <tr>
+        <td>Logout:</td>
+        <td>
+            <button onclick="logout();">Logout</button>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

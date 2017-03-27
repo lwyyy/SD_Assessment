@@ -4,6 +4,8 @@ import json
 import os
 import pickle
 from flask import Flask, request, render_template, redirect, g, send_from_directory
+from tkMessageBox import *
+
 
 # Create exportable app
 app = Flask(__name__)
@@ -35,9 +37,49 @@ app.weapon = ['Blaster', 'Needle Gun', 'Blade', 'Cannon', 'Whip']
 app.cost = {'Blaster': 5, 'Needle Gun': 12, 'Blade': 3, 'Cannon': 15, 'Whip': 5}
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    if not os.path.isdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users")):
+        os.mkdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"))
+
+    if not os.path.isfile(
+            os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), "usersfile")):
+        createduser = dict()
+        createduser["inital_account"] = "123"
+        pickle.dump(createduser,
+                    open(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), "usersfile"),
+                         "wb"))
+
+    loadedusers = pickle.load(
+        open(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), "usersfile"), "rb"))
+    if request.method == 'GET':
+        return render_template('login.html', users=loadedusers), httpcodes.OK
+    return True
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html'), httpcodes.OK
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        loadedusers = pickle.load(
+            open(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), "usersfile"), "rb"))
+        os.mkdir(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), username))
+
+        loadedusers[username] = password
+        pickle.dump(loadedusers,
+                    open(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), "usersfile"),
+                         "wb"))
+    return render_template('register.html', username=username, password=password), httpcodes.CREATED
+
+
+@app.route('/index', methods=['GET'])
 def welcome_page():
-    return app.send_static_file('index.html'), httpcodes.OK
+    if request.method == 'GET':
+        return render_template('index.html'), httpcodes.OK
 
 
 def sumband(createdband):

@@ -42,7 +42,7 @@
                 myTable.rows[row].cells[2].innerHTML = '-';
                 myTable.rows[row].cells[3].innerHTML = '-';
                 myTable.rows[row].cells[4].innerHTML = '-';
-                myTable.rows[row].cells[5].innerHTML = '-';
+                myTable.rows[row].cells[5].innerHTML = '-'
                 myTable.rows[row].cells[6].innerHTML = '-';
                 myTable.rows[row].cells[7].innerHTML = 0;
                 myTable.rows[row].cells[8].innerHTML = '-';
@@ -62,7 +62,6 @@
             {% endfor %}
             updateCost();
         }
-
         function updateCost() {
             var sum = 0;
             var myTable = document.getElementById('rosterTable');
@@ -70,6 +69,7 @@
             for (i = 1; i <= 8; i++) {
                 sum = sum + parseInt(myTable.rows[i].cells[7].innerHTML);
             }
+
 
             remainingGold.innerHTML = total - sum;
         }
@@ -191,7 +191,7 @@
             capexperience.setAttribute("value", document.getElementById('capexp').value);
             form.appendChild(capexperience);
 //end
-            var capskills = [];
+            var capskills = []
             var capskillarr = document.getElementsByName("capskil");
             for (k = 0; k < capskillarr.length; k++) {
                 if (capskillarr[k].checked) {
@@ -258,7 +258,7 @@
                 form.appendChild(enexperience);
 //end
                 if (hadEnsign) {
-                    var ensskills = [];
+                    var ensskills = []
                     var ensskillarr = document.getElementsByName("ensskil");
                     for (k = 0; k < ensskillarr.length; k++) {
                         if (ensskillarr[k].checked) {
@@ -286,10 +286,10 @@
                 form.appendChild(ensweap);
             }
 
-            var troopsarr = [];
+            var troopsarr = []
             for (i = 1; i < 11; i++) {
                 var selector = document.getElementById('troop' + i);
-                if(selector)
+                if (selector)
                     troopsarr.push(selector.value);
             }
             var troops = document.createElement("input");
@@ -518,7 +518,6 @@ Hire apprentice? <input type="checkbox" name="appHire" onClick="hireEng()" {% if
             <td>{{ people[trooper]['Cost'] }}</td>
             <td>{{ people[trooper]['Notes'] }}</td>
         </tr>
-        {% set p = p + 1 %}
     {% endfor %}
     {% for i in range((band['Troops']|length)+1,11) %}
         <tr>

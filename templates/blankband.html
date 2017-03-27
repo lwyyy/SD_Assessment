@@ -37,7 +37,7 @@
                 myTable.rows[row].cells[2].innerHTML = '-';
                 myTable.rows[row].cells[3].innerHTML = '-';
                 myTable.rows[row].cells[4].innerHTML = '-';
-                myTable.rows[row].cells[5].innerHTML = '-';
+                myTable.rows[row].cells[5].innerHTML = '-'
                 myTable.rows[row].cells[6].innerHTML = '-';
                 myTable.rows[row].cells[7].innerHTML = 0;
                 myTable.rows[row].cells[8].innerHTML = '-';
@@ -126,6 +126,7 @@
                     {% endfor %}
                     list.appendChild(div);
 
+
                 }
             {% endfor %}
         }
@@ -137,15 +138,6 @@
             form.setAttribute("method", method);
             form.setAttribute("action", "/new");
 
-
-            /*  bandname = request.form['bandname']
-             capspec = request.form['capspec']
-             ensspec = request.form['ensspec']
-             capskill = request.form['capskill']
-             ensskill = request.form['ensskill']
-             capweap = request.form['capweap']
-             ensweap = request.form['ensweap']
-             troops = json.loads(request.form['troops']) */
 
             var bandname = document.createElement("input");
             bandname.setAttribute("type", "hidden");
@@ -190,7 +182,7 @@
                 form.appendChild(ensweap);
             }
 
-            var troopsarr = [];
+            var troopsarr = []
             for (i = 1; i < 11; i++) {
                 var selector = document.getElementById('troop' + i);
                 troopsarr.push(selector.value);
@@ -209,7 +201,7 @@
 </head>
 <body>
 
-<h1>Warband</h1>
+<h1>Create Warband</h1>
 <h2>Warband Name:<input type="text" id="bandnametext" name="bandnametext"></h2>
 
 <table border="0">

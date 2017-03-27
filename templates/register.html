@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FG Warband Register</title>
+
+    <script type="text/javascript">
+
+        function doFormSubmit() {
+
+            var password = document.getElementById("password").value;
+            var confirm_password = document.getElementById("confirm_password").value;
+            if (password == confirm_password) {
+                method = "post"; // Set method to post by default if not specified.
+
+                var form = document.createElement("form");
+                form.setAttribute("method", method);
+                form.setAttribute("action", "/register");
+
+                var username = document.createElement("input");
+                username.setAttribute("type", "hidden");
+                username.setAttribute("name", "username");
+                username.setAttribute("value", document.getElementById('username').value);
+                form.appendChild(username);
+                password = document.createElement("input");
+                password.setAttribute("type", "hidden");
+                password.setAttribute("name", "password");
+                password.setAttribute("value", document.getElementById('password').value);
+                form.appendChild(password);
+
+                document.body.appendChild(form);
+                form.submit();
+            }else {
+                alert("Sorry, password doesn't equal to confirm password");
+            }
+        }
+    </script>
+</head>
+<body>
+
+<h1>FG Warband Register</h1>
+
+<table id='registerTable'>
+    <tr>
+        <td>Username:</td>
+        <td><input type="text" id="username" name="username"></td>
+    </tr>
+    <tr>
+        <td>Password:</td>
+        <td><input type="password" id="password" name="password"></td>
+    </tr>
+    <tr>
+        <td>Confirm Password:</td>
+        <td><input type="password" id="confirm_password" name="confirm_password"></td>
+    </tr>
+</table>
+<br/><br/>
+<input id="registeror" type="button" value="Register" onclick="doFormSubmit();"/>
+&nbsp;&nbsp;
+<input id="back" type="button" value="Back" onclick="window.location.href='/'"/>
+</body>
+</html>
+
