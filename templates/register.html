@@ -5,11 +5,50 @@
 
     <script type="text/javascript">
 
+        var checkname = false;
+        var checkpsw = false;
+        var checkconfirmpsw = false;
+
+        function check_Username(username) {
+            if (isNaN(username)) {
+                {% for name in users.keys() %}
+                    if (username == "{{ name }}") {
+                        document.getElementById("check_name").innerHTML = "Username not available!";
+                        return false;
+                    }
+                {% endfor %}
+                checkname = true;
+                document.getElementById("check_name").innerHTML = "Username available";
+            } else {
+                document.getElementById("check_name").innerHTML = "Username cannot be empty!";
+            }
+        }
+
+        function check_Password(password) {
+            if (isNaN(password)) {
+                document.getElementById("check_password").innerHTML = "Password available";
+                checkpsw = true;
+            }else{
+                document.getElementById("check_password").innerHTML = "Password cannot be empty and at least has one character!";
+            }
+        }
+
+        function check_Confirm_Password(confirm_password) {
+            if (isNaN(confirm_password) && isNaN(password)) {
+                if (confirm_password == document.getElementById("password").value){
+                    checkconfirmpsw = true;
+                    document.getElementById("check_confirm_password").innerHTML = "Confirm Password True";
+                } else{
+                    document.getElementById("check_confirm_password").innerHTML = "Confirm Password Wrong";
+                }
+            } else {
+                document.getElementById("check_confirm_password").innerHTML = "Confirm password cannot be empty and at least has one character!";
+            }
+        }
+
         function doFormSubmit() {
 
-            var password = document.getElementById("password").value;
-            var confirm_password = document.getElementById("confirm_password").value;
-            if (password == confirm_password) {
+            if (checkname && checkpsw && checkconfirmpsw) {
                 method = "post"; // Set method to post by default if not specified.
 
                 var form = document.createElement("form");
@@ -30,7 +69,7 @@
                 document.body.appendChild(form);
                 form.submit();
             }else {
-                alert("Sorry, password doesn't equal to confirm password");
+                alert("Sorry, password check your input information");
             }
         }
     </script>
@@ -42,15 +81,18 @@
 <table id='registerTable'>
     <tr>
         <td>Username:</td>
-        <td><input type="text" id="username" name="username"></td>
+        <td><input type="text" id="username" name="username" onblur="check_Username(this.value)"></td>
+        <td><i id="check_name"></i></td>
     </tr>
     <tr>
         <td>Password:</td>
-        <td><input type="password" id="password" name="password"></td>
+        <td><input type="password" id="password" name="password" onblur="check_Password(this.value)"></td>
+        <td><i id="check_password"></i></td>
     </tr>
     <tr>
         <td>Confirm Password:</td>
-        <td><input type="password" id="confirm_password" name="confirm_password"></td>
+        <td><input type="password" id="confirm_password" name="confirm_password" onblur="check_Confirm_Password(this.value)"></td>
+        <td><i id="check_confirm_password"></i></td>
     </tr>
 </table>
 <br/><br/>

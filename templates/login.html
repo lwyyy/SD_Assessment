@@ -4,17 +4,6 @@
     <title>FG Warband</title>
     <script type="text/javascript">
 
-        function addCookie(name, value, expireHours) {
-            var cookieString = name + "=" + escape(value);
-
-            if (expireHours > 0) {
-                var date = new Date();
-                date.setTime(date.getTime + expireHours * 3600 * 1000);
-                cookieString = cookieString + "; expire=" + date.toGMTString();
-            }
-            document.cookie = cookieString;
-        }
-
         function doFormSubmit() {
 
             var user_name = document.getElementById("username").value;
@@ -32,16 +21,27 @@
                 }
             {% endfor %}
 
-
-
             if (flag == 2) {
                 alert("password wrong!");
                 window.location.href = "/";
             } else if (flag == 1) {
-                addCookie('username', user_name, 1000);
+                method = "post"; // Set method to post by default if not specified.
+
+                var form = document.createElement("form");
+                form.setAttribute("method", method);
+                form.setAttribute("action", "/");
+
+                var username = document.createElement("input");
+                username.setAttribute("type", "hidden");
+                username.setAttribute("name", "username");
+                username.setAttribute("value", user_name);
+                form.appendChild(username);
+
+                document.body.appendChild(form);
+                form.submit();
 
                 alert("login successful!");
-                window.location.href = "/index";
+
             } else {
                 alert("user non-exist!");
                 window.location.href = "/";
