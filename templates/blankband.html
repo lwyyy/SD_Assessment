@@ -95,9 +95,11 @@
             }
             {% for troop in people.keys() %}
                 if (sel == "{{troop}}") {
-                    member_num = member_num + 1;
-                    members.innerHTML = member_num;
-                    check_Members();
+                    if (myTable.rows[row].cells[7].innerHTML == 0) {
+                        member_num = member_num + 1;
+                        members.innerHTML = member_num;
+                        check_Members();
+                    }
                     myTable.rows[row].cells[1].innerHTML = '{{ people[troop]['Move'] }}';
                     myTable.rows[row].cells[2].innerHTML = '{{ people[troop]['Fight'] }}';
                     myTable.rows[row].cells[3].innerHTML = '{{ people[troop]['Shoot'] }}';
@@ -239,6 +241,11 @@
                 isPublic.setAttribute("name", "isPublic");
                 isPublic.setAttribute("value", document.getElementById('isPublic').value);
                 form.appendChild(isPublic);
+                var mbNumber = document.createElement("input");
+                mbNumber.setAttribute("type", "hidden");
+                mbNumber.setAttribute("name", "mbNumber");
+                mbNumber.setAttribute("value", member_num);
+                form.appendChild(mbNumber);
                 var treasury = document.createElement("input");
                 treasury.setAttribute("type", "hidden");
                 treasury.setAttribute("name", "treasury");
@@ -254,11 +261,16 @@
                 capskill.setAttribute("name", "capskill");
                 capskill.setAttribute("value", document.getElementById('skillchoice').value);
                 form.appendChild(capskill);
-                var capweap = document.createElement("input");
-                capweap.setAttribute("type", "hidden");
-                capweap.setAttribute("name", "capweap");
-                capweap.setAttribute("value", document.getElementById('capweapsel').value);
-                form.appendChild(capweap);
+                var capweap1 = document.createElement("input");
+                capweap1.setAttribute("type", "hidden");
+                capweap1.setAttribute("name", "capweap1");
+                capweap1.setAttribute("value", document.getElementById('capweapsel1').value);
+                form.appendChild(capweap1);
+                var capweap2 = document.createElement("input");
+                capweap2.setAttribute("type", "hidden");
+                capweap2.setAttribute("name", "capweap2");
+                capweap2.setAttribute("value", document.getElementById('capweapsel2').value);
+                form.appendChild(capweap2);
                 if (engHire) {
                     var hasensign = document.createElement("input");
                     hasensign.setAttribute("type", "hidden");
@@ -296,7 +308,7 @@
                 document.body.appendChild(form);
                 form.submit();
             } else {
-                alert("Exceed 10 memebers, please remove members!")
+                alert("Please check your information!")
             }
         }
     </script>
@@ -352,9 +364,16 @@
 
                 <option value="{{ spec }}">{{ spec }}</option>
             {% endfor %}
-        </select></td>
+            </select>
+        </td>
         <td>
-            <select id="capweapsel" onchange="updateCapWeapCost(this)">
+            <select id="capweapsel1" onchange="updateCapWeapCost(this)">
+                <option value="Empty">Select...</option>
+                {% for weap in weaps %}
+                    <option value="{{ weap }}">{{ weap }}</option>
+                {% endfor %}
+            </select>
+            <select id="capweapsel2" onchange="updateCapWeapCost(this)">
                 <option value="Empty">Select...</option>
                 {% for weap in weaps %}
                     <option value="{{ weap }}">{{ weap }}</option>
@@ -390,7 +409,6 @@ Hire apprentice? <input type="checkbox" name="appHire" onClick="hireEng()">250gc
                 <select id="ensskillsel" onchange="setEnsSkillchoice(this)">
                     <option value="Empty">Select...</option>
                     {% for spec in specs %}
-
                         <option value="{{ spec }}">{{ spec }}</option>
                     {% endfor %}
                 </select>

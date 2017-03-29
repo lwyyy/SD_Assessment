@@ -78,19 +78,6 @@ def register():
         return render_template('register.html', users=loadedusers), httpcodes.CREATED
 
 
-def sumband(createdband):
-    total = 0;
-    for item in createdband['Captain']['Items']:
-        total = total + app.cost[item]
-    if 'Ensign' in createdband.keys():
-        total = total + 250
-        for item in createdband['Ensign']['Items']:
-            total = total + app.cost[item]
-    for troop in createdband['Troops']:
-        total = total + app.troops[troop]['Cost']
-    return total
-
-
 def validate_band(createdband):
     ''' Need to write the validation '''
     return True
@@ -114,18 +101,23 @@ def new_warband():
     if request.method == 'POST':
         bandname = request.form['bandname']
         treasury = request.form['treasury']
+        ispublic = request.form['isPublic']
+        mbnumber = request.form['mbNumber']
         capspec = request.form['capspec']
-        isPublic = request.form['isPublic']
         capskill = request.form['capskill']
-        capweap = request.form['capweap']
+        capweap1 = request.form['capweap1']
+        capweap2 = request.form['capweap2']
         troops = json.loads(request.form['troops'])
         createdband = dict()
         createdband['Name'] = bandname
-        createdband['isPublic'] = isPublic
+        createdband['isPublic'] = ispublic
+        createdband['mbNumber'] = mbnumber
         createdband['Captain'] = dict(app.wizard['Captain'])
         createdband['Captain']['Specialism'] = capspec
         createdband['Captain']['Skillset'].append(capskill)
-        createdband['Captain']['Items'].append(capweap)
+        createdband['Captain']['Items'] = []
+        createdband['Captain']['Items'].append(capweap1)
+        createdband['Captain']['Items'].append(capweap2)
         if 'hasensign' in request.form.keys():
             ensspec = request.form['ensspec']
             ensskill = request.form['ensskill']
@@ -133,6 +125,7 @@ def new_warband():
             createdband['Ensign'] = dict(app.apprentice['Ensign'])
             createdband['Ensign']['Specialism'] = ensspec
             createdband['Ensign']['Skillset'].append(ensskill)
+            createdband['Ensign']['Items'] = []
             createdband['Ensign']['Items'].append(ensweap)
         createdband['Troops'] = []
         for item in troops:
@@ -229,20 +222,29 @@ def view_given_warband(user, band):
 
 @app.route('/edit/<band>', methods=['GET', 'POST'])
 def edit_given_warband(band):
+    loadedusers = pickle.load(
+        open(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), "usersfile"), "rb"))
     loadedband = pickle.load(
         open(os.path.join(
             os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), app.login_name), band),
              "rb"))
+    bandlist = os.listdir(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), app.login_name))
     if request.method == 'GET':
-        return render_template('editband.html', band=loadedband, people=app.troops, wizard=app.wizard,
+        if app.login_name == "":
+            return render_template('login.html', users=loadedusers), httpcodes.OK
+        else:
+            return render_template('editband.html', bandlist=bandlist, band=loadedband, people=app.troops, wizard=app.wizard,
                                apprentice=app.apprentice, specs=app.specialisms, skills=app.skillsets,
-                               weaps=app.weapon), httpcodes.OK
+                               weaps=app.weapon, costs=app.cost), httpcodes.OK
     if request.method == 'POST':
         bandname = request.form['bandname']
+        treasury = request.form['treasury']
+        ispublic = request.form['isPublic']
+        mbnumber = request.form['mbNumber']
         capspec = request.form['capspec']
-        # capskill = request.form['capskill']
         skills = json.loads(request.form['capskill'])
-        capweap = request.form['capweap']
+        capweap1 = request.form['capweap1']
+        capweap2 = request.form['capweap2']
         troops = json.loads(request.form['troops'])
         capmov = request.form['capmove']
         capfig = request.form['capfight']
@@ -253,10 +255,15 @@ def edit_given_warband(band):
         capexp = request.form['capexperience']
         createdband = dict()
         createdband['Name'] = bandname
+        createdband['isPublic'] = ispublic
+        createdband['mbNumber'] = mbnumber
         createdband['Captain'] = dict(app.wizard['Captain'])
         createdband['Captain']['Specialism'] = capspec
         createdband['Captain']['Skillset'].extend(skills)
-        createdband['Captain']['Items'].append(capweap)
+        # createdband['Captain']['Items'].append(capweap)
+        createdband['Captain']['Items'] = []
+        createdband['Captain']['Items'].append(capweap1)
+        createdband['Captain']['Items'].append(capweap2)
         createdband['Captain']['Move'] = capmov
         createdband['Captain']['Fight'] = capfig
         createdband['Captain']['Shoot'] = capsho
@@ -265,9 +272,15 @@ def edit_given_warband(band):
         createdband['Captain']['Health'] = caphea
         createdband['Captain']['Experience'] = capexp
         if 'hasensign' in request.form.keys():
-            ensspec = request.form['ensspec']
-            # ensskill = request.form['ensskill']
-            eskills = json.loads(request.form['ensskill'])
+            createdband['Ensign'] = dict(app.apprentice['Ensign'])
+            if 'fireensign' in request.form.keys():
+                eskills = json.loads(request.form['ensskill'])
+                ensspec = loadedband['Ensign']['Specialism']
+                createdband['Ensign']['Skillset'].extend(eskills)
+            else:
+                ensspec = request.form['ensspec']
+                eskills = request.form['ensskill']
+                createdband['Ensign']['Skillset'].append(eskills)
             ensmov = request.form['ensmove']
             ensfig = request.form['ensfight']
             enssho = request.form['ensshoot']
@@ -276,9 +289,8 @@ def edit_given_warband(band):
             enshea = request.form['enshealth']
             ensexp = request.form['ensexperience']
             ensweap = request.form['ensweap']
-            createdband['Ensign'] = dict(app.apprentice['Ensign'])
             createdband['Ensign']['Specialism'] = ensspec
-            createdband['Ensign']['Skillset'].extend(eskills)
+            createdband['Ensign']['Items'] = []
             createdband['Ensign']['Items'].append(ensweap)
             createdband['Ensign']['Move'] = ensmov
             createdband['Ensign']['Fight'] = ensfig
@@ -291,21 +303,12 @@ def edit_given_warband(band):
         for item in troops:
             if item != "Empty":
                 createdband['Troops'].append(item)
-        if len(createdband['Troops']) > 9:
-            return render_template('blankband.html', people=app.troops, wizard=app.wizard, apprentice=app.apprentice,
-                                   specs=app.specialisms, skills=app.skillsets, weaps=app.weapon), httpcodes.OK
-        if validate_band(loadedband, createdband):
-            createdband['Treasury'] = 500 - sumband(createdband)
-            pickle.dump(createdband,
-                        open(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), bandname),
+
+        createdband['Treasury'] = treasury
+        pickle.dump(createdband,
+                    open(os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), app.login_name), bandname),
                              "wb"))
-            return render_template('editband.html', band=createdband, people=app.troops, wizard=app.wizard,
-                                   apprentice=app.apprentice, specs=app.specialisms, skills=app.skillsets,
-                                   weaps=app.weapon), httpcodes.OK
-        else:
-            return render_template('editband.html', band=loadedband, people=app.troops, wizard=app.wizard,
-                                   apprentice=app.apprentice, specs=app.specialisms, skills=app.skillsets,
-                                   weaps=app.weapon), httpcodes.BAD_REQUEST
+        return redirect(url_for("edit_warband"))
 
 
 @app.route('/delete/<band>', methods=['GET'])
