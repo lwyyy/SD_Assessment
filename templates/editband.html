@@ -127,7 +127,7 @@
                 myTable.rows[row].cells[7].innerHTML = 0;
                 myTable.rows[row].cells[8].innerHTML = '-';
             } else {
-                if (refund_list[row] == false && myTable.rows[row].cells[7].innerHTML != 0){
+                if (refund_list[row] == false && myTable.rows[row].cells[7].innerHTML != 0) {
                     mbcost = parseInt(myTable.rows[row].cells[7].innerHTML);
                     total = total + mbcost;
                 }
@@ -162,9 +162,9 @@
 
         function addCapExp() {
             var exp = parseInt(document.getElementById("capexp_num").value);
-            var old_exp = parseInt(document.getElementById("capexp").value);
+            var old_exp = parseInt(document.getElementById("capexp").innerHTML);
 
-            if (exp < 0){
+            if (exp < 0) {
                 alert("Exp number can not lower than zero!")
             } else {
                 cap_exp = cap_exp + exp;
@@ -175,9 +175,9 @@
 
         function addEnsExp() {
             var exp = parseInt(document.getElementById("enexp_num").value);
-            var old_exp = parseInt(document.getElementById("enexp").value);
+            var old_exp = parseInt(document.getElementById("enexp").innerHTML);
 
-            if (exp < 0){
+            if (exp < 0) {
                 alert("Exp number can not lower than zero!")
             } else {
                 ens_exp = ens_exp + exp;
@@ -189,7 +189,7 @@
         function topUp() {
             var credits = parseInt(document.getElementById("topup_num").value);
 
-            if (credits < 0){
+            if (credits < 0) {
                 alert("Top up number can not lower than zero!")
             } else {
                 total = total + credits;
@@ -265,14 +265,94 @@
                 }
             {% endfor %}
         }
-        
-        function editCap() {
+
+        function editCap(origin_id, old_value) {
             if (cap_exp > 9) {
                 if (exp_flag == 0) {
-                    exp_flag = 1;
+                    if (isNaN(old_value)){
+                        exp_flag = 1;
+                        alert("Edit Captain success");
+                    }else {
+                        var add_value = parseInt(document.getElementById(origin_id).value);
+                        if ((add_value-1) == old_value){
+                            exp_flag = 1;
+                            alert("Edit Captain success");
+                        }else {
+                            document.getElementById(origin_id).value = old_value;
+                            alert("Only can add 1!")
+                        }
+                    }
                 } else {
-                    //TODO
+                    if (isNaN(old_value)) {
+                        var capskillarr = document.getElementsByName(origin_id);
+                        for (var k = 0; k < capskillarr.length; k++) {
+                            if (capskillarr[k].value == old_value) {
+                                capskillarr[k].checked = false;
+                            }
+                        }
+                        alert("Already edit stats or skills!");
+                    } else {
+                        document.getElementById(origin_id).value = old_value;
+                        alert("Already edit stats or skills!");
+                    }
                 }
+            } else {
+                if (isNaN(old_value)) {
+                    var capskillarr = document.getElementsByName(origin_id);
+                    for (var k = 0; k < capskillarr.length; k++) {
+                        if (capskillarr[k].value == old_value) {
+                            capskillarr[k].checked = false;
+                        }
+                    }
+                }else{
+                    document.getElementById(origin_id).value = old_value;
+                }
+                alert("New Experience less than 10!")
+            }
+        }
+
+        function editEns(origin_id, old_value) {
+            if (ens_exp > 9) {
+                if (exp_flag == 0) {
+                    if (isNaN(old_value)){
+                        exp_flag = 1;
+                        alert("Edit Ensign success");
+                    }else {
+                        var add_value = parseInt(document.getElementById(origin_id).value);
+                        if ((add_value-1) == old_value){
+                            exp_flag = 1;
+                            alert("Edit Ensign success");
+                        }else {
+                            document.getElementById(origin_id).value = old_value;
+                            alert("Only can add 1!")
+                        }
+                    }
+                } else {
+                    if (isNaN(old_value)) {
+                        var enskillarr = document.getElementsByName(origin_id);
+                        for (var k = 0; k < enskillarr.length; k++) {
+                            if (enskillarr[k].value == old_value) {
+                                enskillarr[k].checked = false;
+                            }
+                        }
+                        alert("Already edit stats or skills!");
+                    } else {
+                        document.getElementById(origin_id).value = old_value;
+                        alert("Already edit stats or skills!");
+                    }
+                }
+            } else {
+                if (isNaN(old_value)) {
+                    var enskillarr = document.getElementsByName(origin_id);
+                    for (var k = 0; k < enskillarr.length; k++) {
+                        if (enskillarr[k].value == old_value) {
+                            enskillarr[k].checked = false;
+                        }
+                    }
+                }else{
+                    document.getElementById(origin_id).value = old_value;
+                }
+                alert("New Experience less than 10!")
             }
         }
 
@@ -343,7 +423,7 @@
                 var capexperience = document.createElement("input");
                 capexperience.setAttribute("type", "hidden");
                 capexperience.setAttribute("name", "capexperience");
-                capexperience.setAttribute("value", document.getElementById('capexp').value);
+                capexperience.setAttribute("value", document.getElementById('capexp').innerHTML);
                 form.appendChild(capexperience);
                 //end
                 var capskills = [];
@@ -369,7 +449,7 @@
                 capweap2.setAttribute("value", document.getElementById('capweapsel2').value);
                 form.appendChild(capweap2);
 
-                if (engHire==true) {
+                if (engHire == true) {
                     var hasensign = document.createElement("input");
                     hasensign.setAttribute("type", "hidden");
                     hasensign.setAttribute("name", "hasensign");
@@ -389,7 +469,7 @@
                     form.appendChild(enshield);
 
                     //end
-                    if (hadEnsign==true && fireflag==false) {
+                    if (hadEnsign == true && fireflag == false) {
                         var fireensign = document.createElement("input");
                         fireensign.setAttribute("type", "hidden");
                         fireensign.setAttribute("name", "fireensign");
@@ -418,7 +498,7 @@
                         var enexperience = document.createElement("input");
                         enexperience.setAttribute("type", "hidden");
                         enexperience.setAttribute("name", "ensexperience");
-                        enexperience.setAttribute("value", document.getElementById('enexp').value);
+                        enexperience.setAttribute("value", document.getElementById('enexp').innerHTML);
                         form.appendChild(enexperience);
                         var ensskills = [];
                         var ensskillarr = document.getElementsByName("ensskil");
@@ -549,11 +629,15 @@
     <tr>
 
         <td>{{ band['Captain']['Move'] }}</td>
-        <td><input id="capfig" type="number" value="{{ band['Captain']['Fight'] }}" onchange="editCap()"></td>
-        <td><input id="capsho" type="number" value="{{ band['Captain']['Shoot'] }}" onchange="editCap()"></td>
+        <td><input id="capfig" type="number" value="{{ band['Captain']['Fight'] }}"
+                   onchange="editCap(this.id, {{ band['Captain']['Fight'] }})"></td>
+        <td><input id="capsho" type="number" value="{{ band['Captain']['Shoot'] }}"
+                   onchange="editCap(this.id, {{ band['Captain']['Shoot'] }}) "></td>
         <td>{{ band['Captain']['Shield'] }}</td>
-        <td><input id="capmor" type="number" value="{{ band['Captain']['Morale'] }}" onchange="editCap()"></td>
-        <td><input id="caphea" type="number" value="{{ band['Captain']['Health'] }}" onchange="editCap()"></td>
+        <td><input id="capmor" type="number" value="{{ band['Captain']['Morale'] }}"
+                   onchange="editCap(this.id, {{ band['Captain']['Morale'] }})"></td>
+        <td><input id="caphea" type="number" value="{{ band['Captain']['Health'] }}"
+                   onchange="editCap(this.id, {{ band['Captain']['Health'] }})"></td>
         <td>{{ band['Captain']['Specialism'] }}</td>
         <td>
             <select id="capweapsel1" onchange="updateCapWeapCost(this)">
@@ -582,12 +666,14 @@
                 {% if opt in band['Captain']['Skillset'] %}
                     <input type="checkbox" name="capskil" value="{{ opt }}" checked disabled>{{ opt }}
                 {% else %}
-                    <input type="checkbox" name="capskil" value="{{ opt }}" onclick="editCap()">{{ opt }}
+                    <input type="checkbox" name="capskil" value="{{ opt }}" onclick="editCap('capskil', '{{ opt }}')">
+                    {{ opt }}
                 {% endif %}
             {% endfor %}
         </td>
         <td id="capexp">{{ band['Captain']['Experience'] }}</td>
-        <td><input id="capexp_num" type="number" value="0"/><input type="button" name="appexp" value="Add" onClick="addCapExp()"></td>
+        <td><input id="capexp_num" type="number" value="0"/><input type="button" name="addcapexp" value="Add"
+                                                                   onClick="addCapExp()"></td>
     </tr>
 
 </table>
@@ -607,14 +693,15 @@ Hire apprentice? <input type="checkbox" name="appHire" onClick="hireEng()" {% if
                 <td>Weapons and Equipment</td>
                 <td>Skills</td>
                 <td>Experience</td>
+                <td>Add Exp</td>
             </tr>
             <tr>
                 <td>{{ band['Ensign']['Move'] }}</td>
-                <td><input id="enfig" type="number" value="{{ band['Ensign']['Fight'] }}"></td>
-                <td><input id="ensho" type="number" value="{{ band['Ensign']['Shoot'] }}"></td>
+                <td><input id="enfig" type="number" value="{{ band['Ensign']['Fight'] }}" onchange="editEns(this.id, {{ band['Ensign']['Fight'] }})"></td>
+                <td><input id="ensho" type="number" value="{{ band['Ensign']['Shoot'] }}" onchange="editEns(this.id, {{ band['Ensign']['Shoot'] }})"></td>
                 <td>{{ band['Ensign']['Shield'] }}</td>
-                <td><input id="enmor" type="number" value="{{ band['Ensign']['Morale'] }}"></td>
-                <td><input id="enhea" type="number" value="{{ band['Ensign']['Health'] }}"></td>
+                <td><input id="enmor" type="number" value="{{ band['Ensign']['Morale'] }}" onchange="editEns(this.id, {{ band['Ensign']['Morale'] }})"></td>
+                <td><input id="enhea" type="number" value="{{ band['Ensign']['Health'] }}" onchange="editEns(this.id, {{ band['Ensign']['Health'] }})"></td>
                 <td>{{ band['Ensign']['Specialism'] }}</td>
                 <td>
                     <select id="ensweapsel" onchange="updateEngWeapCost(this)">
@@ -633,11 +720,13 @@ Hire apprentice? <input type="checkbox" name="appHire" onClick="hireEng()" {% if
                         {% if opt in band['Ensign']['Skillset'] %}
                             <input type="checkbox" name="ensskil" value="{{ opt }}" checked disabled>{{ opt }}
                         {% else %}
-                            <input type="checkbox" name="ensskil" value="{{ opt }}">{{ opt }}
+                            <input type="checkbox" name="ensskil" value="{{ opt }}" onclick="editEns('ensskil', '{{ opt }}')">{{ opt }}
                         {% endif %}
                     {% endfor %}
                 </td>
-                <td><input id="enexp" type="number" value="{{ band['Ensign']['Experience'] }}"/></td>
+                <td id="enexp">{{ band['Ensign']['Experience'] }}</td>
+                <td><input id="enexp_num" type="number" value="0"/><input type="button" name="addenexp" value="Add"
+                                                                   onClick="addEnsExp()"></td>
             </tr>
         </table>
     </div>

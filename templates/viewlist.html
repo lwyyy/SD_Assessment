@@ -21,12 +21,14 @@
         <td>Bandname</td>
     </tr>
     {% for owner, band in bands.items() %}
-        {% for bandname in band %}
-            <tr>
-                <td>{{ owner }}</td>
-                <td><a href="/view/{{ owner }}/{{ bandname }}">{{ bandname }}</a></td>
-            </tr>
-        {% endfor %}
+        {% if owner != "0" %}
+            {% for bandname in band %}
+                <tr>
+                    <td>{{ owner }}</td>
+                    <td><a href="/view/{{ owner }}/{{ bandname }}">{{ bandname }}</a></td>
+                </tr>
+            {% endfor %}
+        {% endif %}
     {% endfor %}
 
 </table>

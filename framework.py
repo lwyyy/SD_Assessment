@@ -78,15 +78,6 @@ def register():
         return render_template('register.html', users=loadedusers), httpcodes.CREATED
 
 
-def validate_band(createdband):
-    ''' Need to write the validation '''
-    return True
-
-
-def validate_band(oldband, newband):
-    return True
-
-
 @app.route('/new', methods=['GET', 'POST'])
 def new_warband():
     loadedusers = pickle.load(
@@ -94,7 +85,7 @@ def new_warband():
     bands = os.listdir(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), app.login_name))
     if request.method == 'GET':
         if app.login_name == "":
-            return render_template('login.html', users=loadedusers), httpcodes.OK
+            return redirect(url_for('login'))
         else:
             return render_template('blankband.html', bands=bands, people=app.troops, wizard=app.wizard, apprentice=app.apprentice,
                                    specs=app.specialisms, skills=app.skillsets, weaps=app.weapon, costs=app.cost), httpcodes.OK
@@ -231,7 +222,7 @@ def edit_given_warband(band):
     bandlist = os.listdir(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), app.login_name))
     if request.method == 'GET':
         if app.login_name == "":
-            return render_template('login.html', users=loadedusers), httpcodes.OK
+            return redirect(url_for('login'))
         else:
             return render_template('editband.html', bandlist=bandlist, band=loadedband, people=app.troops, wizard=app.wizard,
                                apprentice=app.apprentice, specs=app.specialisms, skills=app.skillsets,
@@ -260,7 +251,6 @@ def edit_given_warband(band):
         createdband['Captain'] = dict(app.wizard['Captain'])
         createdband['Captain']['Specialism'] = capspec
         createdband['Captain']['Skillset'].extend(skills)
-        # createdband['Captain']['Items'].append(capweap)
         createdband['Captain']['Items'] = []
         createdband['Captain']['Items'].append(capweap1)
         createdband['Captain']['Items'].append(capweap2)
@@ -316,7 +306,10 @@ def delete_given_warband(band):
     os.remove(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users", ), app.login_name, band))
     bands = os.listdir(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), app.login_name))
     if request.method == 'GET':
-        return render_template('bandlist.html', bands=bands), httpcodes.OK
+        if app.login_name == "":
+            return redirect(url_for('login'))
+        else:
+            return redirect(url_for('edit_warband'))
 
 
 @app.route('/logout', methods=['GET'])
