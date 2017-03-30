@@ -2,16 +2,18 @@
 <html>
 <head>
     <title>View others' band</title>
-    <style type="text/css">
+<style type="text/css">
         #dist {
             margin-left: 40px;
         }
 
         ul {
             list-style-type: none;
-            margin-top: 20px;
+            width: 100%;
+            margin-top: 30px;
             padding: 0;
             overflow: hidden;
+            background-color: #4a86e8;
         }
 
         li {
@@ -20,18 +22,25 @@
 
         a:link, a:visited {
             display: block;
-            width: 120px;
+            width: auto;
             font-weight: bold;
             color: #FFFFFF;
-            background-color: #bebebe;
+            background-color: #4a86e8;
+            font-size: 16px;
             text-align: center;
-            padding: 4px;
+            padding: 15px;
+            margin-left: 40px;
             text-decoration: none;
             text-transform: uppercase;
         }
 
         a:hover, a:active {
-            background-color: #cc0000;
+            background-color: #1c4587;
+        }
+
+        i {
+            font-size: 12px;
+            color: #000000;
         }
 
         table, th, td {
@@ -41,12 +50,14 @@
     </style>
 </head>
 <body>
-<div id="dist">
-    <ul>
-        <li><a href="/index">Home</a></li>
+<ul>
+        <li><a href="/edit">Home</a></li>
         <li><a href="/new">Create band</a></li>
+        <li><a href="/view">View public band</a></li>
         <li><a href="/logout">Logout</a></li>
     </ul>
+<div id="dist">
+
     <br/>
     <h1>{{ owner }}'s Warband</h1>
     <h2>Warband Name: {{ band['Name'] }}</h2>

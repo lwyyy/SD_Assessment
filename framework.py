@@ -57,7 +57,7 @@ def login():
     if request.method == 'POST':
         name = request.form['username']
         app.login_name = name
-        return redirect(url_for('home'))
+        return redirect(url_for('edit_warband'))
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -137,15 +137,6 @@ def new_warband():
                                apprentice=app.apprentice,
                                specs=app.specialisms, skills=app.skillsets, weaps=app.weapon,
                                costs=app.cost), httpcodes.CREATED
-
-
-@app.route('/index', methods=['GET'])
-def home():
-    if request.method == 'GET':
-        if app.login_name == "":
-            return redirect(url_for('login'))
-        else:
-            return render_template('index.html', users=app.login_name), httpcodes.OK
 
 
 @app.route('/edit', methods=['GET'])
@@ -245,6 +236,8 @@ def edit_given_warband(band):
                 os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), app.login_name),
                 band),
                 "rb"))
+        bandlist = os.listdir(
+            os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), app.login_name))
         bandname = request.form['bandname']
         treasury = request.form['treasury']
         ispublic = request.form['isPublic']
@@ -317,7 +310,10 @@ def edit_given_warband(band):
                     open(os.path.join(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"),
                                                    app.login_name), bandname),
                          "wb"))
-        return redirect(url_for("edit_warband"))
+        return render_template('editband.html', bandlist=bandlist, band=createdband, people=app.troops,
+                               wizard=app.wizard,
+                               apprentice=app.apprentice, specs=app.specialisms, skills=app.skillsets,
+                               weaps=app.weapon, costs=app.cost), httpcodes.OK
 
 
 @app.route('/delete/<band>', methods=['GET'])

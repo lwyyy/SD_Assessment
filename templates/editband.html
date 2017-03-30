@@ -9,9 +9,11 @@
 
         ul {
             list-style-type: none;
-            margin-top: 20px;
+            width: 100%;
+            margin-top: 30px;
             padding: 0;
             overflow: hidden;
+            background-color: #4a86e8;
         }
 
         li {
@@ -20,23 +22,25 @@
 
         a:link, a:visited {
             display: block;
-            width: 120px;
+            width: auto;
             font-weight: bold;
             color: #FFFFFF;
-            background-color: #bebebe;
+            background-color: #4a86e8;
+            font-size: 16px;
             text-align: center;
-            padding: 4px;
+            padding: 15px;
+            margin-left: 40px;
             text-decoration: none;
             text-transform: uppercase;
         }
 
         a:hover, a:active {
-            background-color: #cc0000;
+            background-color: #1c4587;
         }
 
         i {
             font-size: 12px;
-            color: #FF0000;
+            color: #000000;
         }
 
         table, th, td {
@@ -318,7 +322,7 @@
             var morale = document.getElementById("capmor").value;
             var health = document.getElementById("caphea").value;
 
-            if (fight < 11 && shoot < 11 && morale < 13 && health < 21){
+            if (fight < 11 && shoot < 11 && morale < 13 && health < 21) {
                 return true;
             }
             return false;
@@ -330,7 +334,7 @@
             var morale = document.getElementById("ensmor").value;
             var health = document.getElementById("enshea").value;
 
-            if (fight < 7 && shoot < 6 && morale < 7 && health < 17){
+            if (fight < 7 && shoot < 6 && morale < 7 && health < 17) {
                 return true;
             }
             return false;
@@ -352,10 +356,10 @@
                     } else {
                         var add_value = parseInt(document.getElementById(origin_id).value);
                         if ((add_value - 1) == old_value) {
-                            if (check_capstats()){
+                            if (check_capstats()) {
                                 exp_flag = 1;
                                 alert("Edit Captain success");
-                            }else{
+                            } else {
                                 document.getElementById(origin_id).value = old_value;
                                 alert("Greater than maximum!")
                             }
@@ -412,7 +416,7 @@
                             if (check_ensstats()) {
                                 exp_flag = 1;
                                 alert("Edit Ensign success");
-                            }else {
+                            } else {
                                 document.getElementById(origin_id).value = old_value;
                                 alert("Greater than maximum!")
                             }
@@ -684,12 +688,14 @@
     </script>
 </head>
 <body>
+<ul>
+    <li><a href="/edit">Home</a></li>
+    <li><a href="/new">Create band</a></li>
+    <li><a href="/view">View public band</a></li>
+    <li><a href="/logout">Logout</a></li>
+</ul>
 <div id="dist">
-    <ul>
-        <li><a href="/index">Home</a></li>
-        <li><a href="/new">Create band</a></li>
-        <li><a href="/logout">Logout</a></li>
-    </ul>
+
     <br/>
     <h1>Warband</h1>
     <h4>Warband Name:<input type="text" id="bandnametext" name="bandnametext" value="{{ band['Name'] }}"
@@ -954,6 +960,7 @@
     <input id="clear" type="button" value="Reset" onclick="window.location.href='/edit/{{ band['Name'] }}'"/>
     &nbsp;
     <input id="back" type="button" value="Back" onclick="window.location.href='/edit'"/>
+    <br/><br/>
 </div>
 </body>
 </html>
