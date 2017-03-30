@@ -2,37 +2,74 @@
 <html>
 <head>
     <title>Holder Page</title>
+    <style type="text/css">
+        #dist {
+            margin-left: 40px;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-top: 20px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        li {
+            float: left;
+        }
+
+        a:link, a:visited {
+            display: block;
+            width: 120px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #bebebe;
+            text-align: center;
+            padding: 4px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        a:hover, a:active {
+            background-color: #cc0000;
+        }
+    </style>
+
+
 </head>
 <body>
-<h1> FG Warband Manager </h1>
-<p>
-    current user: {{ users }}
-</p>
-<table>
-    <tr>
-        <td>New Warband: </td>
-        <td>
-            <button onclick="window.location.href='/new'">New</button>
-        </td>
-    </tr>
-    <tr>
-        <td>Edit Warband:</td>
-        <td>
-            <button onclick="window.location.href='/edit'">Load Existing</button>
-        </td>
-    </tr>
-    <tr>
-        <td>View others public bands:</td>
-        <td>
-            <button onclick="window.location.href='/view'">View</button>
-        </td>
-    </tr>
-    <tr>
-        <td>Logout:</td>
-        <td>
-            <button onclick="window.location.href='/logout'">Logout</button>
-        </td>
-    </tr>
-</table>
+<div id="dist">
+    <ul>
+        <li><a href="/index">Home</a></li>
+        <li><a href="/new">Create band</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+    <br/>
+    <h1> FG Warband Manager </h1>
+    <table>
+        <tr height="40px">
+            <td>Current user:</td>
+            <td><b>{{ users }}</b></td>
+        </tr>
+        <tr height="40px">
+            <td>New Warband:</td>
+            <td>
+                <button onclick="window.location.href='/new'">New</button>
+            </td>
+        </tr>
+        <tr height="40px">
+            <td>Edit Warband:</td>
+            <td>
+                <button onclick="window.location.href='/edit'">My Band list</button>
+            </td>
+        </tr>
+        <tr height="40px">
+            <td>View others public bands:</td>
+            <td>
+                <button onclick="window.location.href='/view'">View</button>
+            </td>
+        </tr>
+    </table>
+</div>
 </body>
 </html>

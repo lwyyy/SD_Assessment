@@ -2,6 +2,11 @@
 <html>
 <head>
     <title>FG Warband</title>
+    <style type="text/css">
+        #dist {
+            margin-left: 40px;
+        }
+    </style>
     <script type="text/javascript">
 
         function doFormSubmit() {
@@ -12,10 +17,10 @@
 
             flag = 0;
             {% for name, pass in users.items() %}
-                if ( user_name == "{{ name }}" ){
+                if (user_name == "{{ name }}") {
                     if (password == "{{ pass }}") {
                         flag = 1;
-                    }else {
+                    } else {
                         flag = 2;
                     }
                 }
@@ -50,28 +55,32 @@
     </script>
 </head>
 <body>
-<h1> FG Warband Manager </h1>
-<p>
-    Please login if you have account.
-    Please register if you are a new user.
-</p>
-<table>
-    <tr>
-        <td>Username</td>
-        <td>
-            <input type="text" id="username" name="username">
-        </td>
-    </tr>
-    <tr>
-        <td>Password</td>
-        <td>
-            <input type="password" id="password" name="password">
-        </td>
-    </tr>
-</table>
-<br/>
-<input id="login" type="button" value="Login" onclick="doFormSubmit();"/>
-&nbsp;&nbsp;
-<button onclick="window.location.href='/register'">Register</button>
+<div id="dist">
+    <h1> FG Warband Manager </h1>
+    <p>
+        <i>Please login if you have account.</i>
+    </p>
+    <P>
+        <i>Please register if you are a new user.</i>
+    </p>
+    <table>
+        <tr height="40px">
+            <td>Username</td>
+            <td>
+                <input type="text" id="username" name="username">
+            </td>
+        </tr>
+        <tr height="40px">
+            <td>Password</td>
+            <td>
+                <input type="password" id="password" name="password">
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <input id="login" type="button" value="Login" onclick="doFormSubmit();"/>
+    &nbsp;&nbsp;
+    <button onclick="window.location.href='/register'">Register</button>
+</div>
 </body>
 </html>

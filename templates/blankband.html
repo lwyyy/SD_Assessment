@@ -2,7 +2,44 @@
 <html>
 <head>
     <title>Ship Crew Editor</title>
-    <style>
+
+    <style type="text/css">
+        #dist {
+            margin-left: 40px;
+        }
+
+        i {
+            font-size: 12px;
+            color: #FF0000;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-top: 20px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        li {
+            float: left;
+        }
+
+        a:link, a:visited {
+            display: block;
+            width: 120px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #bebebe;
+            text-align: center;
+            padding: 4px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        a:hover, a:active {
+            background-color: #cc0000;
+        }
+
         table, th, td {
             border: 1px solid black;
             text-align: left;
@@ -32,6 +69,8 @@
                 engHire = false;
                 document.getElementById("ensignDiv").style.display = "none";
                 document.getElementById("ensweapsel").value = "Empty";
+                document.getElementById("ensskillsel").value = "Empty";
+                setEnsSkillchoice("Empty");
                 total = total + 250 + engweapcost;
                 engweapcost = 0;
                 member_num = member_num - 1;
@@ -62,7 +101,7 @@
         function check_Members() {
             if (member_num > 10) {
                 document.getElementById("checkmembers").innerHTML = "Exceed 10 members!";
-            }else{
+            } else {
                 document.getElementById("checkmembers").innerHTML = "Regular Members";
             }
         }
@@ -70,13 +109,14 @@
         function check_Currency() {
             if (total < 0) {
                 document.getElementById("checkcurrency").innerHTML = "Lower than 0 gc!";
-            }else{
+            } else {
                 document.getElementById("checkcurrency").innerHTML = "Regular Currency";
             }
         }
 
-        function updateTableRow(row, x) {
+        function updateTableRow(fake_row, x) {
             var sel = x.value;
+            var row = fake_row + 1;
 
             var myTable = document.getElementById('rosterTable');
 
@@ -117,7 +157,7 @@
             var sum = 0;
             var myTable = document.getElementById('rosterTable');
 
-            for (i = 1; i <= 9; i++) {
+            for (i = 2; i < 11; i++) {
                 sum = sum + parseInt(myTable.rows[i].cells[7].innerHTML);
             }
             total = total + mbcost;
@@ -168,7 +208,7 @@
         function setCapSkillchoice(x) {
             var choice = x.value;
             var myTable = document.getElementById('wizardTable');
-            var list = myTable.rows[1].cells[8];
+            var list = myTable.rows[2].cells[8];
             while (list.hasChildNodes()) {
                 list.removeChild(list.firstChild);
             }
@@ -181,7 +221,6 @@
                     {% for element in skills[spec] %}
                         var tempbutton = document.createElement("input");
                         tempbutton.setAttribute("type", "radio");
-                        tempbutton.setAttribute("id", "skillchoice");
                         tempbutton.setAttribute("name", "skillchoice");
                         tempbutton.setAttribute("value", "{{element}}");
                         var templabel = document.createElement("label");
@@ -197,7 +236,7 @@
         function setEnsSkillchoice(x) {
             var choice = x.value;
             var myTable = document.getElementById('ensignTable');
-            var list = myTable.rows[1].cells[8];
+            var list = myTable.rows[2].cells[8];
             while (list.hasChildNodes()) {
                 list.removeChild(list.firstChild);
             }
@@ -210,7 +249,6 @@
                     {% for element in skills[spec] %}
                         var tempbutton = document.createElement("input");
                         tempbutton.setAttribute("type", "radio");
-                        tempbutton.setAttribute("id", "skillchoiceens");
                         tempbutton.setAttribute("name", "skillchoiceens");
                         tempbutton.setAttribute("value", "{{element}}");
                         var templabel = document.createElement("label");
@@ -224,169 +262,155 @@
         }
 
         function doFormSubmit() {
-            if (member_num<11 && checkname == true && total>=0) {
-                method = "post"; // Set method to post by default if not specified.
+            if (member_num < 11 && total >= 0) {
+                if (checkname == true && document.getElementById('capspecsel').value != "Empty") {
+                    method = "post";
 
-                var form = document.createElement("form");
-                form.setAttribute("method", method);
-                form.setAttribute("action", "/new");
+                    var form = document.createElement("form");
+                    form.setAttribute("method", method);
+                    form.setAttribute("action", "/new");
 
-                var bandname = document.createElement("input");
-                bandname.setAttribute("type", "hidden");
-                bandname.setAttribute("name", "bandname");
-                bandname.setAttribute("value", document.getElementById('bandnametext').value);
-                form.appendChild(bandname);
-                var isPublic = document.createElement("input");
-                isPublic.setAttribute("type", "hidden");
-                isPublic.setAttribute("name", "isPublic");
-                isPublic.setAttribute("value", document.getElementById('isPublic').value);
-                form.appendChild(isPublic);
-                var mbNumber = document.createElement("input");
-                mbNumber.setAttribute("type", "hidden");
-                mbNumber.setAttribute("name", "mbNumber");
-                mbNumber.setAttribute("value", member_num);
-                form.appendChild(mbNumber);
-                var treasury = document.createElement("input");
-                treasury.setAttribute("type", "hidden");
-                treasury.setAttribute("name", "treasury");
-                treasury.setAttribute("value", total);
-                form.appendChild(treasury);
-                var capspec = document.createElement("input");
-                capspec.setAttribute("type", "hidden");
-                capspec.setAttribute("name", "capspec");
-                capspec.setAttribute("value", document.getElementById('capspecsel').value);
-                form.appendChild(capspec);
-                var capskill = document.createElement("input");
-                capskill.setAttribute("type", "hidden");
-                capskill.setAttribute("name", "capskill");
-                capskill.setAttribute("value", document.getElementById('skillchoice').value);
-                form.appendChild(capskill);
-                var capweap1 = document.createElement("input");
-                capweap1.setAttribute("type", "hidden");
-                capweap1.setAttribute("name", "capweap1");
-                capweap1.setAttribute("value", document.getElementById('capweapsel1').value);
-                form.appendChild(capweap1);
-                var capweap2 = document.createElement("input");
-                capweap2.setAttribute("type", "hidden");
-                capweap2.setAttribute("name", "capweap2");
-                capweap2.setAttribute("value", document.getElementById('capweapsel2').value);
-                form.appendChild(capweap2);
-                if (engHire) {
-                    var hasensign = document.createElement("input");
-                    hasensign.setAttribute("type", "hidden");
-                    hasensign.setAttribute("name", "hasensign");
-                    hasensign.setAttribute("value", engHire);
-                    form.appendChild(hasensign);
-                    var ensspec = document.createElement("input");
-                    ensspec.setAttribute("type", "hidden");
-                    ensspec.setAttribute("name", "ensspec");
-                    ensspec.setAttribute("value", document.getElementById('ensskillsel').value);
-                    form.appendChild(ensspec);
-                    var ensskill = document.createElement("input");
-                    ensskill.setAttribute("type", "hidden");
-                    ensskill.setAttribute("name", "ensskill");
-                    ensskill.setAttribute("value", document.getElementById('skillchoiceens').value);
-                    form.appendChild(ensskill);
-                    var ensweap = document.createElement("input");
-                    ensweap.setAttribute("type", "hidden");
-                    ensweap.setAttribute("name", "ensweap");
-                    ensweap.setAttribute("value", document.getElementById('ensweapsel').value);
-                    form.appendChild(ensweap);
+                    var bandname = document.createElement("input");
+                    bandname.setAttribute("type", "hidden");
+                    bandname.setAttribute("name", "bandname");
+                    bandname.setAttribute("value", document.getElementById('bandnametext').value);
+                    form.appendChild(bandname);
+                    var isPublic = document.createElement("input");
+                    isPublic.setAttribute("type", "hidden");
+                    isPublic.setAttribute("name", "isPublic");
+                    isPublic.setAttribute("value", document.getElementById('isPublic').value);
+                    form.appendChild(isPublic);
+                    var mbNumber = document.createElement("input");
+                    mbNumber.setAttribute("type", "hidden");
+                    mbNumber.setAttribute("name", "mbNumber");
+                    mbNumber.setAttribute("value", member_num);
+                    form.appendChild(mbNumber);
+                    var treasury = document.createElement("input");
+                    treasury.setAttribute("type", "hidden");
+                    treasury.setAttribute("name", "treasury");
+                    treasury.setAttribute("value", total);
+                    form.appendChild(treasury);
+                    var capspec = document.createElement("input");
+                    capspec.setAttribute("type", "hidden");
+                    capspec.setAttribute("name", "capspec");
+                    capspec.setAttribute("value", document.getElementById('capspecsel').value);
+                    form.appendChild(capspec);
+                    var capskills = "Empty";
+                    var capskillarr = document.getElementsByName("skillchoice");
+                    for (k = 0; k < capskillarr.length; k++) {
+                        if (capskillarr[k].checked) {
+                            capskills = capskillarr[k].value;
+                        }
+                    }
+                    var capskill = document.createElement("input");
+                    capskill.setAttribute("type", "hidden");
+                    capskill.setAttribute("name", "capskill");
+                    capskill.setAttribute("value", capskills);
+                    form.appendChild(capskill);
+                    var capweap1 = document.createElement("input");
+                    capweap1.setAttribute("type", "hidden");
+                    capweap1.setAttribute("name", "capweap1");
+                    capweap1.setAttribute("value", document.getElementById('capweapsel1').value);
+                    form.appendChild(capweap1);
+                    var capweap2 = document.createElement("input");
+                    capweap2.setAttribute("type", "hidden");
+                    capweap2.setAttribute("name", "capweap2");
+                    capweap2.setAttribute("value", document.getElementById('capweapsel2').value);
+                    form.appendChild(capweap2);
+                    if (engHire) {
+                        var hasensign = document.createElement("input");
+                        hasensign.setAttribute("type", "hidden");
+                        hasensign.setAttribute("name", "hasensign");
+                        hasensign.setAttribute("value", engHire);
+                        form.appendChild(hasensign);
+                        var ensspec = document.createElement("input");
+                        ensspec.setAttribute("type", "hidden");
+                        ensspec.setAttribute("name", "ensspec");
+                        ensspec.setAttribute("value", document.getElementById('ensskillsel').value);
+                        form.appendChild(ensspec);
+                        var ensskills = "Empty";
+                        var ensskillarr = document.getElementsByName("skillchoiceens");
+                        for (k = 0; k < ensskillarr.length; k++) {
+                            if (ensskillarr[k].checked) {
+                                ensskills = ensskillarr[k].value;
+                            }
+                        }
+                        var ensskill = document.createElement("input");
+                        ensskill.setAttribute("type", "hidden");
+                        ensskill.setAttribute("name", "ensskill");
+                        ensskill.setAttribute("value", ensskills);
+                        form.appendChild(ensskill);
+                        var ensweap = document.createElement("input");
+                        ensweap.setAttribute("type", "hidden");
+                        ensweap.setAttribute("name", "ensweap");
+                        ensweap.setAttribute("value", document.getElementById('ensweapsel').value);
+                        form.appendChild(ensweap);
+                    }
+
+                    var troopsarr = [];
+                    for (i = 1; i < 10; i++) {
+                        var selector = document.getElementById('troop' + i);
+                        troopsarr.push(selector.value);
+                    }
+                    var troops = document.createElement("input");
+                    troops.setAttribute("type", "hidden");
+                    troops.setAttribute("name", "troops");
+                    troops.setAttribute("value", JSON.stringify(troopsarr));
+                    form.appendChild(troops);
+
+                    document.body.appendChild(form);
+
+                    if (engHire) {
+                        if (document.getElementById('ensskillsel').value != "Empty") {
+                            form.submit();
+                            alert("Create success!");
+                        } else {
+                            alert("Please check your apprentice specialism!")
+                        }
+                    } else {
+                        form.submit();
+                        alert("Create success!");
+                    }
+                } else {
+                    alert("Please check your bandname or captain specialism!");
                 }
-
-                var troopsarr = [];
-                for (i = 1; i < 10; i++) {
-                    var selector = document.getElementById('troop' + i);
-                    troopsarr.push(selector.value);
-                }
-                var troops = document.createElement("input");
-                troops.setAttribute("type", "hidden");
-                troops.setAttribute("name", "troops");
-                troops.setAttribute("value", JSON.stringify(troopsarr));
-                form.appendChild(troops);
-
-                document.body.appendChild(form);
-                form.submit();
             } else {
-                alert("Please check your information!")
+                alert("Please check your members number or currency remaining!");
             }
         }
     </script>
 </head>
 <body>
+<div id="dist">
+    <ul>
+        <li><a href="/index">Home</a></li>
+        <li><a href="/new">Create band</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+    <br/>
+    <h1>Create Warband</h1>
+    <h4>Warband Name:<input type="text" id="bandnametext" name="bandnametext" onblur="check_Bandname(this.value)"><i
+            id='check_name'>Empty!</i></h4>
 
-<h1>Create Warband</h1>
-<h2>Warband Name:<input type="text" id="bandnametext" name="bandnametext" onblur="check_Bandname(this.value)"><i id='check_name'>Empty!</i></h2>
-
-<h3>isPublic: <select id="isPublic" name="isPublic">
-            <option value="public">Public</option>
-            <option value="private">Private</option>
-            </select> </h3>
-<table border="0">
-    <tr>
-        <td><h3>Currency remaining: </h3></td>
-        <td id='remainingGold'>500</td>
-        <td><i id="checkcurrency">Regular Currency</i></td>
-    </tr>
-</table>
-<br/>
-<table border="0">
-    <tr>
-        <td><h4>Squad members: </h4></td>
-        <td id='members'>1</td>
-        <td><i id='checkmembers'>Regular Members</i></td>
-    </tr>
-</table>
-<br/>
-<table id="wizardTable">
-    <tr>
-        <td>Move</td>
-        <td>Fight</td>
-        <td>Shoot</td>
-        <td>Shield</td>
-        <td>Morale</td>
-        <td>Health</td>
-        <td>Specialism</td>
-        <td>Weapons and Equipment</td>
-        <td>Skills</td>
-    </tr>
-    <tr>
-        <td>{{ wizard['Captain']['Move'] }}</td>
-        <td>{{ wizard['Captain']['Fight'] }}</td>
-        <td>{{ wizard['Captain']['Shoot'] }}</td>
-        <td>{{ wizard['Captain']['Shield'] }}</td>
-        <td>{{ wizard['Captain']['Morale'] }}</td>
-        <td>{{ wizard['Captain']['Health'] }}</td>
-
-        <td><select id="capspecsel" onchange="setCapSkillchoice(this)">
-            <option value="Empty">Select...</option>
-            {% for spec in specs %}
-
-                <option value="{{ spec }}">{{ spec }}</option>
-            {% endfor %}
-            </select>
-        </td>
-        <td>
-            <select id="capweapsel1" onchange="updateCapWeapCost(this)">
-                <option value="Empty">Select...</option>
-                {% for weap in weaps %}
-                    <option value="{{ weap }}">{{ weap }}</option>
-                {% endfor %}
-            </select>
-            <select id="capweapsel2" onchange="updateCapWeapCost(this)">
-                <option value="Empty">Select...</option>
-                {% for weap in weaps %}
-                    <option value="{{ weap }}">{{ weap }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td></td>
-    </tr>
-
-</table>
-Hire apprentice? <input type="checkbox" name="appHire" onClick="hireEng()">250gc<br>
-<div id="ensignDiv" style='display: none'>
-    <table id="ensignTable">
+    <h4>isPublic: <select id="isPublic" name="isPublic">
+        <option value="public">Public</option>
+        <option value="private">Private</option>
+    </select></h4>
+    <table border="0">
+        <tr>
+            <td><h4>Currency remaining: </h4></td>
+            <td id='remainingGold'>500</td>
+            <td><i id="checkcurrency">Regular Currency</i></td>
+        </tr>
+        <tr>
+            <td><h4>Squad members: </h4></td>
+            <td id='members'>1</td>
+            <td><i id='checkmembers'>Regular Members</i></td>
+        </tr>
+    </table>
+    <br/>
+    <table id="wizardTable">
+        <tr><b>Captain</b></tr>
         <tr>
             <td>Move</td>
             <td>Fight</td>
@@ -399,22 +423,28 @@ Hire apprentice? <input type="checkbox" name="appHire" onClick="hireEng()">250gc
             <td>Skills</td>
         </tr>
         <tr>
-            <td>{{ apprentice['Ensign']['Move'] }}</td>
-            <td>{{ apprentice['Ensign']['Fight'] }}</td>
-            <td>{{ apprentice['Ensign']['Shoot'] }}</td>
-            <td>{{ apprentice['Ensign']['Shield'] }}</td>
-            <td>{{ apprentice['Ensign']['Morale'] }}</td>
-            <td>{{ apprentice['Ensign']['Health'] }}</td>
-            <td>
-                <select id="ensskillsel" onchange="setEnsSkillchoice(this)">
-                    <option value="Empty">Select...</option>
-                    {% for spec in specs %}
-                        <option value="{{ spec }}">{{ spec }}</option>
-                    {% endfor %}
-                </select>
+            <td>{{ wizard['Captain']['Move'] }}</td>
+            <td>{{ wizard['Captain']['Fight'] }}</td>
+            <td>{{ wizard['Captain']['Shoot'] }}</td>
+            <td>{{ wizard['Captain']['Shield'] }}</td>
+            <td>{{ wizard['Captain']['Morale'] }}</td>
+            <td>{{ wizard['Captain']['Health'] }}</td>
+
+            <td><select id="capspecsel" onchange="setCapSkillchoice(this)">
+                <option value="Empty">Select...</option>
+                {% for spec in specs %}
+                    <option value="{{ spec }}">{{ spec }}</option>
+                {% endfor %}
+            </select>
             </td>
             <td>
-                <select id="ensweapsel" onchange="updateEngWeapCost(this)">
+                <select id="capweapsel1" onchange="updateCapWeapCost(this)">
+                    <option value="Empty">Select...</option>
+                    {% for weap in weaps %}
+                        <option value="{{ weap }}">{{ weap }}</option>
+                    {% endfor %}
+                </select>
+                <select id="capweapsel2" onchange="updateCapWeapCost(this)">
                     <option value="Empty">Select...</option>
                     {% for weap in weaps %}
                         <option value="{{ weap }}">{{ weap }}</option>
@@ -423,48 +453,94 @@ Hire apprentice? <input type="checkbox" name="appHire" onClick="hireEng()">250gc
             </td>
             <td></td>
         </tr>
-
     </table>
-</div>
-<table id='rosterTable'>
-    <tr>
-        <td>Class</td>
-        <td>Move</td>
-        <td>Fight</td>
-        <td>Shoot</td>
-        <td>Shield</td>
-        <td>Morale</td>
-        <td>Health</td>
-        <td>Cost</td>
-        <td>Notes</td>
-    </tr>
-    {% for i in range(1,10) %}
+    <br/>
+
+    <b>Hire apprentice? </b><input type="checkbox" name="appHire" onClick="hireEng()">250gc<br>
+    <div id="ensignDiv" style='display: none'>
+        <table id="ensignTable">
+            <tr><b>Apprentice</b></tr>
+            <tr>
+                <td>Move</td>
+                <td>Fight</td>
+                <td>Shoot</td>
+                <td>Shield</td>
+                <td>Morale</td>
+                <td>Health</td>
+                <td>Specialism</td>
+                <td>Weapons and Equipment</td>
+                <td>Skills</td>
+            </tr>
+            <tr>
+                <td>{{ apprentice['Ensign']['Move'] }}</td>
+                <td>{{ apprentice['Ensign']['Fight'] }}</td>
+                <td>{{ apprentice['Ensign']['Shoot'] }}</td>
+                <td>{{ apprentice['Ensign']['Shield'] }}</td>
+                <td>{{ apprentice['Ensign']['Morale'] }}</td>
+                <td>{{ apprentice['Ensign']['Health'] }}</td>
+                <td>
+                    <select id="ensskillsel" onchange="setEnsSkillchoice(this)">
+                        <option value="Empty">Select...</option>
+                        {% for spec in specs %}
+                            <option value="{{ spec }}">{{ spec }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select id="ensweapsel" onchange="updateEngWeapCost(this)">
+                        <option value="Empty">Select...</option>
+                        {% for weap in weaps %}
+                            <option value="{{ weap }}">{{ weap }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <br/>
+
+    <table id='rosterTable'>
+        <tr><b>Squad Members</b></tr>
         <tr>
-            <td>
-                <select id="troop{{ i }}" onchange="updateTableRow({{ i }}, this)" on>
-                    <option value="Empty">Empty</option>
-                    {% for troop in people.keys() %}
-                        <option value="{{ troop }}">{{ troop }}</option>
-                    {% endfor %}
-                </select>
-            </td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>0</td>
-            <td>-</td>
+            <td>Class</td>
+            <td>Move</td>
+            <td>Fight</td>
+            <td>Shoot</td>
+            <td>Shield</td>
+            <td>Morale</td>
+            <td>Health</td>
+            <td>Cost</td>
+            <td>Notes</td>
         </tr>
-    {% endfor %}
-</table>
-<br/>
-<input id="creator" type="button" value="Create Warband" onclick="doFormSubmit();"/>
-&nbsp;
-<button onclick="window.location.href='/new'">Reset</button>
-&nbsp;
-<button onclick="window.location.href='/index'">Back</button>
+        {% for i in range(1,10) %}
+            <tr>
+                <td>
+                    <select id="troop{{ i }}" onchange="updateTableRow({{ i }}, this)">
+                        <option value="Empty">Empty</option>
+                        {% for troop in people.keys() %}
+                            <option value="{{ troop }}">{{ troop }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>0</td>
+                <td>-</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br/>
+    <input id="creator" type="button" value="Create Warband" onclick="doFormSubmit();"/>
+    &nbsp;
+    <button onclick="window.location.href='/new'">Reset</button>
+    &nbsp;
+    <button onclick="window.location.href='/index'">Back</button>
+</div>
 </body>
 </html>
 

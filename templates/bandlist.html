@@ -2,7 +2,38 @@
 <html>
 <head>
     <title>Bands</title>
-    <style>
+    <style type="text/css">
+        #dist {
+            margin-left: 40px;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-top: 20px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        li {
+            float: left;
+        }
+
+        a:link, a:visited {
+            display: block;
+            width: 120px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #bebebe;
+            text-align: center;
+            padding: 4px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        a:hover, a:active {
+            background-color: #cc0000;
+        }
+
         table, th, td {
             border: 1px solid black;
             text-align: left;
@@ -10,25 +41,45 @@
     </style>
 </head>
 <body>
-<h1>Bands</h1>
-<table>
-    <tr>
-        <td>Bandname</td>
-        <td>Operation</td>
-    </tr>
-    {% for band in bands %}
+<div id="dist">
+    <ul>
+        <li><a href="/index">Home</a></li>
+        <li><a href="/new">Create band</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+    <br/>
+    <h1>My Bands</h1>
+    <table>
         <tr>
-            <td><a href="/edit/{{ band }}">{{ band }}</a></td>
-            <td><a href="/delete/{{ band }}">Delete</a></td>
+            <td>Bandname</td>
+            <td>Edit</td>
+            <td>Delete</td>
         </tr>
-    {% endfor %}
 
-</table>
-<br/>
-<button onclick="window.location.href='/edit'">Refresh</button>
-&nbsp;&nbsp;
-<button onclick="window.location.href='/index'">Back</button>
+        {% for band in bands %}
+            <tr>
+                <td>{{ band }}</td>
+                <td>
+                    <button onclick="window.location.href='/edit/{{ band }}'">Edit</button>
+                </td>
+                <td>
+                    <button onclick="window.location.href='/delete/{{ band }}'">Delete</button>
+                </td>
+            </tr>
+        {% endfor %}
 
+        {% if bands == [] %}
+            <b>No bands!</b>
+            <br/><br/>
+        {% endif %}
+
+    </table>
+    <br/>
+
+    <button onclick="window.location.href='/edit'">Refresh</button>
+    &nbsp;&nbsp;
+    <button onclick="window.location.href='/index'">Back</button>
+</div>
 </body>
 </html>
 

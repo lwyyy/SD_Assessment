@@ -3,6 +3,25 @@
 <head>
     <title>FG Warband Register</title>
 
+    <style type="text/css">
+        #dist {
+            margin-left: 40px;
+        }
+
+        i {
+            font-size:12px;
+            color:#FF0000;
+        }
+
+        td {
+            width: 100px;
+        }
+
+        tr {
+            height: 40px;
+        }
+    </style>
+
     <script type="text/javascript">
 
         var checkname = false;
@@ -13,36 +32,36 @@
             if (isNaN(username)) {
                 {% for name in users.keys() %}
                     if (username == "{{ name }}") {
-                        document.getElementById("check_name").innerHTML = "Username not available!";
+                        document.getElementById("check_name").innerHTML = "Not available!";
                         return false;
                     }
                 {% endfor %}
                 checkname = true;
-                document.getElementById("check_name").innerHTML = "Username available";
+                document.getElementById("check_name").innerHTML = "available";
             } else {
-                document.getElementById("check_name").innerHTML = "Username cannot be empty!";
+                document.getElementById("check_name").innerHTML = "At least has one character!";
             }
         }
 
         function check_Password(password) {
             if (isNaN(password)) {
-                document.getElementById("check_password").innerHTML = "Password available";
+                document.getElementById("check_password").innerHTML = "Available";
                 checkpsw = true;
-            }else{
-                document.getElementById("check_password").innerHTML = "Password cannot be empty and at least has one character!";
+            } else {
+                document.getElementById("check_password").innerHTML = "At least has one character!";
             }
         }
 
         function check_Confirm_Password(confirm_password) {
             if (isNaN(confirm_password) && isNaN(password)) {
-                if (confirm_password == document.getElementById("password").value){
+                if (confirm_password == document.getElementById("password").value) {
                     checkconfirmpsw = true;
-                    document.getElementById("check_confirm_password").innerHTML = "Confirm Password True";
-                } else{
-                    document.getElementById("check_confirm_password").innerHTML = "Confirm Password Wrong";
+                    document.getElementById("check_confirm_password").innerHTML = "True";
+                } else {
+                    document.getElementById("check_confirm_password").innerHTML = "Wrong";
                 }
             } else {
-                document.getElementById("check_confirm_password").innerHTML = "Confirm password cannot be empty and at least has one character!";
+                document.getElementById("check_confirm_password").innerHTML = "At least has one character!";
             }
         }
 
@@ -68,37 +87,39 @@
 
                 document.body.appendChild(form);
                 form.submit();
-            }else {
+            } else {
                 alert("Sorry, password check your input information");
             }
         }
     </script>
 </head>
 <body>
+<div id="dist">
+    <h1>FG Warband Register</h1>
 
-<h1>FG Warband Register</h1>
-
-<table id='registerTable'>
-    <tr>
-        <td>Username:</td>
-        <td><input type="text" id="username" name="username" onblur="check_Username(this.value)"></td>
-        <td><i id="check_name"></i></td>
-    </tr>
-    <tr>
-        <td>Password:</td>
-        <td><input type="password" id="password" name="password" onblur="check_Password(this.value)"></td>
-        <td><i id="check_password"></i></td>
-    </tr>
-    <tr>
-        <td>Confirm Password:</td>
-        <td><input type="password" id="confirm_password" name="confirm_password" onblur="check_Confirm_Password(this.value)"></td>
-        <td><i id="check_confirm_password"></i></td>
-    </tr>
-</table>
-<br/><br/>
-<input id="registeror" type="button" value="Register" onclick="doFormSubmit();"/>
-&nbsp;&nbsp;
-<input id="back" type="button" value="Back" onclick="window.location.href='/'"/>
+    <table id='registerTable'>
+        <tr>
+            <td>Username:</td>
+            <td><input type="text" id="username" name="username" onblur="check_Username(this.value)"></td>
+            <td style="width:100px"><i id="check_name">Empty</i></td>
+        </tr>
+        <tr>
+            <td>Password:</td>
+            <td><input type="password" id="password" name="password" onblur="check_Password(this.value)"></td>
+            <td style="width:100px"><i id="check_password">Empty</i></td>
+        </tr>
+        <tr>
+            <td>Confirm Password:</td>
+            <td><input type="password" id="confirm_password" name="confirm_password"
+                       onblur="check_Confirm_Password(this.value)"></td>
+            <td><i id="check_confirm_password">Empty</i></td>
+        </tr>
+    </table>
+    <br/><br/>
+    <input id="registeror" type="button" value="Register" onclick="doFormSubmit();"/>
+    &nbsp;&nbsp;
+    <input id="back" type="button" value="Back" onclick="window.location.href='/'"/>
+</div>
 </body>
 </html>
 

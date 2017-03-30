@@ -2,7 +2,43 @@
 <html>
 <head>
     <title>Ship Crew Editor</title>
-    <style>
+    <style type="text/css">
+        #dist {
+            margin-left: 40px;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-top: 20px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        li {
+            float: left;
+        }
+
+        a:link, a:visited {
+            display: block;
+            width: 120px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #bebebe;
+            text-align: center;
+            padding: 4px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        a:hover, a:active {
+            background-color: #cc0000;
+        }
+
+        i {
+            font-size: 12px;
+            color: #FF0000;
+        }
+
         table, th, td {
             border: 1px solid black;
             text-align: left;
@@ -19,11 +55,13 @@
         var exp_flag = 0;
         var cap_exp = 0;
         var ens_exp = 0;
+        var specens_flag = 0;
 
         {% if 'Ensign' in band.keys() %}
             var engHire = true;
             var hadEnsign = true;
             var fireflag = false;
+            specens_flag = 1;
         {%else%}
             var engHire = false;
             var hadEnsign = false;
@@ -41,6 +79,7 @@
         function hireEng() {
             if (engHire == false) {
                 engHire = true;
+                specens_flag = 0;
                 document.getElementById("ensignHireDiv").style.display = "block";
                 total = total - 250;
                 member_num = member_num + 1;
@@ -51,8 +90,11 @@
             }
             else {
                 engHire = false;
+                specens_flag = 1;
                 document.getElementById("ensignHireDiv").style.display = "none";
                 document.getElementById("ensweapsel").value = "Empty";
+                document.getElementById("ensskillsel").value = "Empty";
+                setEnsSkillchoice("Empty");
                 if (fireflag == true) {
                     total = total + 250 + engweapcost;
                     engweapcost = 0;
@@ -104,8 +146,9 @@
             }
         }
 
-        function updateTableRow(row, x) {
+        function updateTableRow(fake_row, x) {
             var sel = x.value;
+            var row = fake_row + 1;
 
             var myTable = document.getElementById('rosterTable');
 
@@ -113,7 +156,7 @@
                 member_num = member_num - 1;
                 members.innerHTML = member_num;
                 check_Members();
-                if (refund_list[row] == false) {
+                if (refund_list[fake_row - 1] == false) {
                     mbcost = parseInt(myTable.rows[row].cells[7].innerHTML);
                     total = total + mbcost;
                     mbcost = 0;
@@ -127,7 +170,7 @@
                 myTable.rows[row].cells[7].innerHTML = 0;
                 myTable.rows[row].cells[8].innerHTML = '-';
             } else {
-                if (refund_list[row] == false && myTable.rows[row].cells[7].innerHTML != 0) {
+                if (refund_list[fake_row - 1] == false && myTable.rows[row].cells[7].innerHTML != 0) {
                     mbcost = parseInt(myTable.rows[row].cells[7].innerHTML);
                     total = total + mbcost;
                 }
@@ -154,7 +197,7 @@
                 mbcost = parseInt(myTable.rows[row].cells[7].innerHTML);
                 total = total - mbcost;
                 mbcost = 0;
-                refund_list[row] = false;
+                refund_list[fake_row - 1] = false;
             }
             remainingGold.innerHTML = total;
             check_Currency();
@@ -165,10 +208,11 @@
             var old_exp = parseInt(document.getElementById("capexp").innerHTML);
 
             if (exp < 0) {
-                alert("Exp number can not lower than zero!")
+                document.getElementById("capexp_num").value = 0;
+                alert("Exp number cannot less than zero!")
             } else {
                 cap_exp = cap_exp + exp;
-                capexp.innerHTML = old_exp + exp;
+                capexp.innerHTML = (old_exp + exp);
                 document.getElementById("capexp_num").value = 0;
             }
         }
@@ -178,10 +222,11 @@
             var old_exp = parseInt(document.getElementById("enexp").innerHTML);
 
             if (exp < 0) {
-                alert("Exp number can not lower than zero!")
+                document.getElementById("enexp_num").value = 0;
+                alert("Exp number cannot less than zero!")
             } else {
                 ens_exp = ens_exp + exp;
-                enexp.innerHTML = old_exp + exp;
+                enexp.innerHTML = (old_exp + exp);
                 document.getElementById("enexp_num").value = 0;
             }
         }
@@ -240,20 +285,21 @@
         function setEnsSkillchoice(x) {
             var choice = x.value;
             var myTable = document.getElementById('ensignHireTable');
-            var list = myTable.rows[1].cells[8];
+            var list = myTable.rows[2].cells[8];
             while (list.hasChildNodes()) {
                 list.removeChild(list.firstChild);
             }
             if (choice == "Empty") {
                 list.appendChild(document.createTextNode("No Skills"));
+                specens_flag = 0;
             }
             {% for spec in skills.keys() %}
                 if (choice == "{{spec}}") {
+                    specens_flag = 1;
                     var div = document.createElement("div");
                     {% for element in skills[spec] %}
                         var tempbutton = document.createElement("input");
                         tempbutton.setAttribute("type", "radio");
-                        tempbutton.setAttribute("id", "skillchoiceens");
                         tempbutton.setAttribute("name", "skillchoiceens");
                         tempbutton.setAttribute("value", "{{element}}");
                         var templabel = document.createElement("label");
@@ -266,18 +312,54 @@
             {% endfor %}
         }
 
+        function check_capstats() {
+            var fight = document.getElementById("capfig").value;
+            var shoot = document.getElementById("capsho").value;
+            var morale = document.getElementById("capmor").value;
+            var health = document.getElementById("caphea").value;
+
+            if (fight < 11 && shoot < 11 && morale < 13 && health < 21){
+                return true;
+            }
+            return false;
+        }
+
+        function check_ensstats() {
+            var fight = document.getElementById("ensfig").value;
+            var shoot = document.getElementById("enssho").value;
+            var morale = document.getElementById("ensmor").value;
+            var health = document.getElementById("enshea").value;
+
+            if (fight < 7 && shoot < 6 && morale < 7 && health < 17){
+                return true;
+            }
+            return false;
+        }
+
         function editCap(origin_id, old_value) {
             if (cap_exp > 9) {
                 if (exp_flag == 0) {
-                    if (isNaN(old_value)){
+                    if (isNaN(old_value)) {
                         exp_flag = 1;
+                        var capskillarr = document.getElementsByName(origin_id);
+                        for (var k = 0; k < capskillarr.length; k++) {
+                            if (capskillarr[k].value == old_value) {
+                                capskillarr[k].checked = true;
+                                capskillarr[k].disabled = "disabled";
+                            }
+                        }
                         alert("Edit Captain success");
-                    }else {
+                    } else {
                         var add_value = parseInt(document.getElementById(origin_id).value);
-                        if ((add_value-1) == old_value){
-                            exp_flag = 1;
-                            alert("Edit Captain success");
-                        }else {
+                        if ((add_value - 1) == old_value) {
+                            if (check_capstats()){
+                                exp_flag = 1;
+                                alert("Edit Captain success");
+                            }else{
+                                document.getElementById(origin_id).value = old_value;
+                                alert("Greater than maximum!")
+                            }
+                        } else {
                             document.getElementById(origin_id).value = old_value;
                             alert("Only can add 1!")
                         }
@@ -304,7 +386,7 @@
                             capskillarr[k].checked = false;
                         }
                     }
-                }else{
+                } else {
                     document.getElementById(origin_id).value = old_value;
                 }
                 alert("New Experience less than 10!")
@@ -314,15 +396,27 @@
         function editEns(origin_id, old_value) {
             if (ens_exp > 9) {
                 if (exp_flag == 0) {
-                    if (isNaN(old_value)){
+                    if (isNaN(old_value)) {
                         exp_flag = 1;
+                        var enskillarr = document.getElementsByName(origin_id);
+                        for (var k = 0; k < enskillarr.length; k++) {
+                            if (enskillarr[k].value == old_value) {
+                                enskillarr[k].checked = true;
+                                enskillarr[k].disabled = true;
+                            }
+                        }
                         alert("Edit Ensign success");
-                    }else {
+                    } else {
                         var add_value = parseInt(document.getElementById(origin_id).value);
-                        if ((add_value-1) == old_value){
-                            exp_flag = 1;
-                            alert("Edit Ensign success");
-                        }else {
+                        if ((add_value - 1) == old_value) {
+                            if (check_ensstats()) {
+                                exp_flag = 1;
+                                alert("Edit Ensign success");
+                            }else {
+                                document.getElementById(origin_id).value = old_value;
+                                alert("Greater than maximum!")
+                            }
+                        } else {
                             document.getElementById(origin_id).value = old_value;
                             alert("Only can add 1!")
                         }
@@ -349,7 +443,7 @@
                             enskillarr[k].checked = false;
                         }
                     }
-                }else{
+                } else {
                     document.getElementById(origin_id).value = old_value;
                 }
                 alert("New Experience less than 10!")
@@ -357,7 +451,7 @@
         }
 
         function doFormSubmit() {
-            if (member_num < 11 && checkname == true && total >= 0) {
+            if (member_num < 11 && checkname == true && total >= 0 && specens_flag == 1) {
                 method = "post"; // Set method to post by default if not specified.
 
                 var form = document.createElement("form");
@@ -549,10 +643,17 @@
                         enexperience.setAttribute("name", "ensexperience");
                         enexperience.setAttribute("value", {{ apprentice['Ensign']['Experience'] }});
                         form.appendChild(enexperience);
+                        var ensskills = "Empty";
+                        var ensskillarr = document.getElementsByName("skillchoiceens");
+                        for (k = 0; k < ensskillarr.length; k++) {
+                            if (ensskillarr[k].checked) {
+                                ensskills = ensskillarr[k].value;
+                            }
+                        }
                         var ensskill = document.createElement("input");
                         ensskill.setAttribute("type", "hidden");
                         ensskill.setAttribute("name", "ensskill");
-                        ensskill.setAttribute("value", document.getElementById('skillchoiceens').value);
+                        ensskill.setAttribute("value", ensskills);
                         form.appendChild(ensskill);
                         var ensweap = document.createElement("input");
                         ensweap.setAttribute("type", "hidden");
@@ -583,157 +684,40 @@
     </script>
 </head>
 <body>
-
-<h1>Warband</h1>
-<h2>Warband Name:<input type="text" id="bandnametext" name="bandnametext" value="{{ band['Name'] }}"
-                        onblur="check_Bandname(this.value)"><i id='check_name'>No change</i></h2>
-<h3>isPublic: <select id="isPublic" name="isPublic">
-    <option value="public" {% if band['isPublic'] == "public" %} selected {% endif %}>Public</option>
-    <option value="private" {% if band['isPublic'] == "private" %} selected {% endif %}>Private</option>
-</select></h3>
-<table border="0">
-    <tr>
-        <td><h3>Currency remaining: </h3></td>
-        <td id='remainingGold'>{{ band['Treasury'] }}</td>
-        <td><i id="checkcurrency">Regular Currency</i></td>
-    </tr>
-    <tr>
-        <td>Add Currency:</td>
-        <td><input id="topup_num" type="number" value="0"></td>
-        <td><input id="topup" type="button" value="Top up" onclick="topUp()"/></td>
-    </tr>
-</table>
-<br/>
-<table border="0">
-    <tr>
-        <td><h4>Squad members: </h4></td>
-        <td id='members'>{{ band['mbNumber'] }}</td>
-        <td><i id='checkmembers'>Regular Members</i></td>
-    </tr>
-</table>
-<br/>
-<table id="wizardTable">
-    <tr>
-        <td>Move</td>
-        <td>Fight</td>
-        <td>Shoot</td>
-        <td>Shield</td>
-        <td>Morale</td>
-        <td>Health</td>
-        <td>Specialism</td>
-        <td>Weapons and Equipment</td>
-        <td>Skills</td>
-        <td>Experience</td>
-        <td>Add Exp</td>
-    </tr>
-    <tr>
-
-        <td>{{ band['Captain']['Move'] }}</td>
-        <td><input id="capfig" type="number" value="{{ band['Captain']['Fight'] }}"
-                   onchange="editCap(this.id, {{ band['Captain']['Fight'] }})"></td>
-        <td><input id="capsho" type="number" value="{{ band['Captain']['Shoot'] }}"
-                   onchange="editCap(this.id, {{ band['Captain']['Shoot'] }}) "></td>
-        <td>{{ band['Captain']['Shield'] }}</td>
-        <td><input id="capmor" type="number" value="{{ band['Captain']['Morale'] }}"
-                   onchange="editCap(this.id, {{ band['Captain']['Morale'] }})"></td>
-        <td><input id="caphea" type="number" value="{{ band['Captain']['Health'] }}"
-                   onchange="editCap(this.id, {{ band['Captain']['Health'] }})"></td>
-        <td>{{ band['Captain']['Specialism'] }}</td>
-        <td>
-            <select id="capweapsel1" onchange="updateCapWeapCost(this)">
-                <option value="Empty">Select...</option>
-                {% for weap in weaps %}
-                    {% if weap in band['Captain']['Items'][0] %}
-                        <option value="{{ weap }}" selected>{{ weap }}</option>
-                    {% else %}
-                        <option value="{{ weap }}">{{ weap }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-            <select id="capweapsel2" onchange="updateCapWeapCost(this)">
-                <option value="Empty">Select...</option>
-                {% for weap in weaps %}
-                    {% if weap in band['Captain']['Items'][1] %}
-                        <option value="{{ weap }}" selected>{{ weap }}</option>
-                    {% else %}
-                        <option value="{{ weap }}">{{ weap }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-        </td>
-        <td>
-            {% for opt in skills[band['Captain']['Specialism']] %}
-                {% if opt in band['Captain']['Skillset'] %}
-                    <input type="checkbox" name="capskil" value="{{ opt }}" checked disabled>{{ opt }}
-                {% else %}
-                    <input type="checkbox" name="capskil" value="{{ opt }}" onclick="editCap('capskil', '{{ opt }}')">
-                    {{ opt }}
-                {% endif %}
-            {% endfor %}
-        </td>
-        <td id="capexp">{{ band['Captain']['Experience'] }}</td>
-        <td><input id="capexp_num" type="number" value="0"/><input type="button" name="addcapexp" value="Add"
-                                                                   onClick="addCapExp()"></td>
-    </tr>
-
-</table>
-Hire apprentice? <input type="checkbox" name="appHire" onClick="hireEng()" {% if 'Ensign' in band.keys() %}
-                        checked {% endif %}>250gc<br>
-{% if 'Ensign' in band.keys() %}
-    <div id="ensignDiv" style='display: block'>
-        <table id="ensignTable">
-            <tr>
-                <td>Move</td>
-                <td>Fight</td>
-                <td>Shoot</td>
-                <td>Shield</td>
-                <td>Morale</td>
-                <td>Health</td>
-                <td>Specialism</td>
-                <td>Weapons and Equipment</td>
-                <td>Skills</td>
-                <td>Experience</td>
-                <td>Add Exp</td>
-            </tr>
-            <tr>
-                <td>{{ band['Ensign']['Move'] }}</td>
-                <td><input id="enfig" type="number" value="{{ band['Ensign']['Fight'] }}" onchange="editEns(this.id, {{ band['Ensign']['Fight'] }})"></td>
-                <td><input id="ensho" type="number" value="{{ band['Ensign']['Shoot'] }}" onchange="editEns(this.id, {{ band['Ensign']['Shoot'] }})"></td>
-                <td>{{ band['Ensign']['Shield'] }}</td>
-                <td><input id="enmor" type="number" value="{{ band['Ensign']['Morale'] }}" onchange="editEns(this.id, {{ band['Ensign']['Morale'] }})"></td>
-                <td><input id="enhea" type="number" value="{{ band['Ensign']['Health'] }}" onchange="editEns(this.id, {{ band['Ensign']['Health'] }})"></td>
-                <td>{{ band['Ensign']['Specialism'] }}</td>
-                <td>
-                    <select id="ensweapsel" onchange="updateEngWeapCost(this)">
-                        <option value="Empty">Select...</option>
-                        {% for weap in weaps %}
-                            {% if weap in band['Ensign']['Items'] %}
-                                <option value="{{ weap }}" selected>{{ weap }}</option>
-                            {% else %}
-                                <option value="{{ weap }}">{{ weap }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                </td>
-                <td>
-                    {% for opt in skills[band['Ensign']['Specialism']] %}
-                        {% if opt in band['Ensign']['Skillset'] %}
-                            <input type="checkbox" name="ensskil" value="{{ opt }}" checked disabled>{{ opt }}
-                        {% else %}
-                            <input type="checkbox" name="ensskil" value="{{ opt }}" onclick="editEns('ensskil', '{{ opt }}')">{{ opt }}
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                <td id="enexp">{{ band['Ensign']['Experience'] }}</td>
-                <td><input id="enexp_num" type="number" value="0"/><input type="button" name="addenexp" value="Add"
-                                                                   onClick="addEnsExp()"></td>
-            </tr>
-        </table>
-    </div>
-{% endif %}
-
-<div id="ensignHireDiv" style='display: none'>
-    <table id="ensignHireTable">
+<div id="dist">
+    <ul>
+        <li><a href="/index">Home</a></li>
+        <li><a href="/new">Create band</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+    <br/>
+    <h1>Warband</h1>
+    <h4>Warband Name:<input type="text" id="bandnametext" name="bandnametext" value="{{ band['Name'] }}"
+                            onblur="check_Bandname(this.value)"><i id='check_name'>No change</i></h4>
+    <h4>isPublic: <select id="isPublic" name="isPublic">
+        <option value="public" {% if band['isPublic'] == "public" %} selected {% endif %}>Public</option>
+        <option value="private" {% if band['isPublic'] == "private" %} selected {% endif %}>Private</option>
+    </select></h4>
+    <table border="0">
+        <tr>
+            <td><h4>Currency remaining: </h4></td>
+            <td id='remainingGold'>{{ band['Treasury'] }}</td>
+            <td><i id="checkcurrency">Regular Currency</i></td>
+        </tr>
+        <tr>
+            <td>Add Currency:</td>
+            <td><input id="topup_num" type="number" value="0"></td>
+            <td><input id="topup" type="button" value="Top up" onclick="topUp()"/></td>
+        </tr>
+        <tr>
+            <td><h4>Squad members: </h4></td>
+            <td id='members'>{{ band['mbNumber'] }}</td>
+            <td><i id='checkmembers'>Regular Members</i></td>
+        </tr>
+    </table>
+    <br/>
+    <table id="wizardTable">
+        <tr><b>Captain</b></tr>
         <tr>
             <td>Move</td>
             <td>Fight</td>
@@ -745,100 +729,232 @@ Hire apprentice? <input type="checkbox" name="appHire" onClick="hireEng()" {% if
             <td>Weapons and Equipment</td>
             <td>Skills</td>
             <td>Experience</td>
+            <td>Add Exp</td>
         </tr>
         <tr>
-            <td>{{ apprentice['Ensign']['Move'] }}</td>
-            <td>{{ apprentice['Ensign']['Fight'] }}</td>
-            <td>{{ apprentice['Ensign']['Shoot'] }}</td>
-            <td>{{ apprentice['Ensign']['Shield'] }}</td>
-            <td>{{ apprentice['Ensign']['Morale'] }}</td>
-            <td>{{ apprentice['Ensign']['Health'] }}</td>
+            <td>{{ band['Captain']['Move'] }}</td>
+            <td><input id="capfig" type="number" value="{{ band['Captain']['Fight'] }}"
+                       onchange="editCap(this.id, {{ band['Captain']['Fight'] }})"></td>
+            <td><input id="capsho" type="number" value="{{ band['Captain']['Shoot'] }}"
+                       onchange="editCap(this.id, {{ band['Captain']['Shoot'] }}) "></td>
+            <td>{{ band['Captain']['Shield'] }}</td>
+            <td><input id="capmor" type="number" value="{{ band['Captain']['Morale'] }}"
+                       onchange="editCap(this.id, {{ band['Captain']['Morale'] }})"></td>
+            <td><input id="caphea" type="number" value="{{ band['Captain']['Health'] }}"
+                       onchange="editCap(this.id, {{ band['Captain']['Health'] }})"></td>
+            <td>{{ band['Captain']['Specialism'] }}</td>
             <td>
-                <select id="ensskillsel" onchange="setEnsSkillchoice(this)">
-                    <option value="Empty">Select...</option>
-                    {% for spec in specs %}
-                        <option value="{{ spec }}">{{ spec }}</option>
-                    {% endfor %}
-                </select>
-            </td>
-            <td>
-                <select id="hireensweapsel" onchange="updateEngWeapCost(this)">
+                <select id="capweapsel1" onchange="updateCapWeapCost(this)">
                     <option value="Empty">Select...</option>
                     {% for weap in weaps %}
-                        <option value="{{ weap }}">{{ weap }}</option>
+                        {% if weap in band['Captain']['Items'][0] %}
+                            <option value="{{ weap }}" selected>{{ weap }}</option>
+                        {% else %}
+                            <option value="{{ weap }}">{{ weap }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
-            </td>
-            <td></td>
-            <td>{{ apprentice['Ensign']['Experience'] }}</td>
-        </tr>
-    </table>
-</div>
-
-<table id='rosterTable'>
-    <tr>
-        <td>Class</td>
-        <td>Move</td>
-        <td>Fight</td>
-        <td>Shoot</td>
-        <td>Shield</td>
-        <td>Morale</td>
-        <td>Health</td>
-        <td>Cost</td>
-        <td>Notes</td>
-    </tr>
-
-    {% for trooper in band['Troops'] %}
-        <tr>
-            <td>
-                <select id="troop{{ loop.index }}" onchange="updateTableRow({{ loop.index }}, this)">
-                    <option value="Empty">Empty</option>
-                    {% for troop in people.keys() %}
-                        {% if troop == trooper %}
-                            <option value="{{ troop }}" selected>{{ troop }}</option>
+                <select id="capweapsel2" onchange="updateCapWeapCost(this)">
+                    <option value="Empty">Select...</option>
+                    {% for weap in weaps %}
+                        {% if weap in band['Captain']['Items'][1] %}
+                            <option value="{{ weap }}" selected>{{ weap }}</option>
                         {% else %}
-                            <option value="{{ troop }}">{{ troop }}</option>
+                            <option value="{{ weap }}">{{ weap }}</option>
                         {% endif %}
                     {% endfor %}
                 </select>
             </td>
-            <td>{{ people[trooper]['Move'] }}</td>
-            <td>{{ people[trooper]['Fight'] }}</td>
-            <td>{{ people[trooper]['Shoot'] }}</td>
-            <td>{{ people[trooper]['Shield'] }}</td>
-            <td>{{ people[trooper]['Morale'] }}</td>
-            <td>{{ people[trooper]['Health'] }}</td>
-            <td>{{ people[trooper]['Cost'] }}</td>
-            <td>{{ people[trooper]['Notes'] }}</td>
-        </tr>
-    {% endfor %}
-    {% for i in range((band['Troops']|length)+1,10) %}
-        <tr>
             <td>
-                <select id="troop{{ i }}" onchange="updateTableRow({{ i }}, this)">
-                    <option value="Empty">Empty</option>
-                    {% for troop in people.keys() %}
-                        <option value="{{ troop }}">{{ troop }}</option>
-                    {% endfor %}
-                </select>
+                {% for opt in skills[band['Captain']['Specialism']] %}
+                    {% if opt in band['Captain']['Skillset'] %}
+                        <input type="checkbox" name="capskil" value="{{ opt }}" checked disabled>{{ opt }}
+                    {% else %}
+                        <input type="checkbox" name="capskil" value="{{ opt }}"
+                               onclick="editCap('capskil', '{{ opt }}')">
+                        {{ opt }}
+                    {% endif %}
+                {% endfor %}
             </td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>0</td>
-            <td>-</td>
+            <td id="capexp">{{ band['Captain']['Experience'] }}</td>
+            <td><input id="capexp_num" type="number" value="0"/><input type="button" name="addcapexp" value="Add"
+                                                                       onClick="addCapExp()"></td>
         </tr>
-    {% endfor %}
-</table>
-<br/>
-<input id="editor" type="button" value="Edit Warband" onclick="doFormSubmit();"/>
-&nbsp;
-<input id="clear" type="button" value="Reset" onclick="window.location.href='/edit/{{ band['Name'] }}'"/>
-&nbsp;
-<input id="back" type="button" value="Back" onclick="window.location.href='/edit'"/>
+
+    </table>
+    <br/>
+    <b>Hire apprentice? </b><input type="checkbox" name="appHire" onClick="hireEng()" {% if 'Ensign' in band.keys() %}
+                                   checked {% endif %}>250gc<br>
+    {% if 'Ensign' in band.keys() %}
+        <div id="ensignDiv" style='display: block'>
+            <table id="ensignTable">
+                <tr><b>Apprentice</b></tr>
+                <tr>
+                    <td>Move</td>
+                    <td>Fight</td>
+                    <td>Shoot</td>
+                    <td>Shield</td>
+                    <td>Morale</td>
+                    <td>Health</td>
+                    <td>Specialism</td>
+                    <td>Weapons and Equipment</td>
+                    <td>Skills</td>
+                    <td>Experience</td>
+                    <td>Add Exp</td>
+                </tr>
+                <tr>
+                    <td>{{ band['Ensign']['Move'] }}</td>
+                    <td><input id="enfig" type="number" value="{{ band['Ensign']['Fight'] }}"
+                               onchange="editEns(this.id, {{ band['Ensign']['Fight'] }})"></td>
+                    <td><input id="ensho" type="number" value="{{ band['Ensign']['Shoot'] }}"
+                               onchange="editEns(this.id, {{ band['Ensign']['Shoot'] }})"></td>
+                    <td>{{ band['Ensign']['Shield'] }}</td>
+                    <td><input id="enmor" type="number" value="{{ band['Ensign']['Morale'] }}"
+                               onchange="editEns(this.id, {{ band['Ensign']['Morale'] }})"></td>
+                    <td><input id="enhea" type="number" value="{{ band['Ensign']['Health'] }}"
+                               onchange="editEns(this.id, {{ band['Ensign']['Health'] }})"></td>
+                    <td>{{ band['Ensign']['Specialism'] }}</td>
+                    <td>
+                        <select id="ensweapsel" onchange="updateEngWeapCost(this)">
+                            <option value="Empty">Select...</option>
+                            {% for weap in weaps %}
+                                {% if weap in band['Ensign']['Items'] %}
+                                    <option value="{{ weap }}" selected>{{ weap }}</option>
+                                {% else %}
+                                    <option value="{{ weap }}">{{ weap }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        {% for opt in skills[band['Ensign']['Specialism']] %}
+                            {% if opt in band['Ensign']['Skillset'] %}
+                                <input type="checkbox" name="ensskil" value="{{ opt }}" checked disabled>{{ opt }}
+                            {% else %}
+                                <input type="checkbox" name="ensskil" value="{{ opt }}"
+                                       onclick="editEns('ensskil', '{{ opt }}')">{{ opt }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td id="enexp">{{ band['Ensign']['Experience'] }}</td>
+                    <td><input id="enexp_num" type="number" value="0"/><input type="button" name="addenexp" value="Add"
+                                                                              onClick="addEnsExp()"></td>
+                </tr>
+            </table>
+        </div>
+    {% endif %}
+
+    <div id="ensignHireDiv" style='display: none'>
+        <table id="ensignHireTable">
+            <tr><b>Apprentice</b></tr>
+            <tr>
+                <td>Move</td>
+                <td>Fight</td>
+                <td>Shoot</td>
+                <td>Shield</td>
+                <td>Morale</td>
+                <td>Health</td>
+                <td>Specialism</td>
+                <td>Weapons and Equipment</td>
+                <td>Skills</td>
+                <td>Experience</td>
+            </tr>
+            <tr>
+                <td>{{ apprentice['Ensign']['Move'] }}</td>
+                <td>{{ apprentice['Ensign']['Fight'] }}</td>
+                <td>{{ apprentice['Ensign']['Shoot'] }}</td>
+                <td>{{ apprentice['Ensign']['Shield'] }}</td>
+                <td>{{ apprentice['Ensign']['Morale'] }}</td>
+                <td>{{ apprentice['Ensign']['Health'] }}</td>
+                <td>
+                    <select id="ensskillsel" onchange="setEnsSkillchoice(this)">
+                        <option value="Empty">Select...</option>
+                        {% for spec in specs %}
+                            <option value="{{ spec }}">{{ spec }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <select id="hireensweapsel" onchange="updateEngWeapCost(this)">
+                        <option value="Empty">Select...</option>
+                        {% for weap in weaps %}
+                            <option value="{{ weap }}">{{ weap }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td></td>
+                <td>{{ apprentice['Ensign']['Experience'] }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <br/>
+    <table id='rosterTable'>
+        <tr><b>Squad memebers</b></tr>
+        <tr>
+            <td>Class</td>
+            <td>Move</td>
+            <td>Fight</td>
+            <td>Shoot</td>
+            <td>Shield</td>
+            <td>Morale</td>
+            <td>Health</td>
+            <td>Cost</td>
+            <td>Notes</td>
+        </tr>
+
+        {% for trooper in band['Troops'] %}
+            <tr>
+                <td>
+                    <select id="troop{{ loop.index }}" onchange="updateTableRow({{ loop.index }}, this)">
+                        <option value="Empty">Empty</option>
+                        {% for troop in people.keys() %}
+                            {% if troop == trooper %}
+                                <option value="{{ troop }}" selected>{{ troop }}</option>
+                            {% else %}
+                                <option value="{{ troop }}">{{ troop }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>{{ people[trooper]['Move'] }}</td>
+                <td>{{ people[trooper]['Fight'] }}</td>
+                <td>{{ people[trooper]['Shoot'] }}</td>
+                <td>{{ people[trooper]['Shield'] }}</td>
+                <td>{{ people[trooper]['Morale'] }}</td>
+                <td>{{ people[trooper]['Health'] }}</td>
+                <td>{{ people[trooper]['Cost'] }}</td>
+                <td>{{ people[trooper]['Notes'] }}</td>
+            </tr>
+        {% endfor %}
+        {% for i in range((band['Troops']|length)+1,10) %}
+            <tr>
+                <td>
+                    <select id="troop{{ i }}" onchange="updateTableRow({{ i }}, this)">
+                        <option value="Empty">Empty</option>
+                        {% for troop in people.keys() %}
+                            <option value="{{ troop }}">{{ troop }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>0</td>
+                <td>-</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br/>
+    <input id="editor" type="button" value="Edit Warband" onclick="doFormSubmit();"/>
+    &nbsp;
+    <input id="clear" type="button" value="Reset" onclick="window.location.href='/edit/{{ band['Name'] }}'"/>
+    &nbsp;
+    <input id="back" type="button" value="Back" onclick="window.location.href='/edit'"/>
+</div>
 </body>
 </html>
 

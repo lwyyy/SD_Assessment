@@ -2,7 +2,38 @@
 <html>
 <head>
     <title>Others' Public Bands</title>
-    <style>
+    <style type="text/css">
+        #dist {
+            margin-left: 40px;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-top: 20px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        li {
+            float: left;
+        }
+
+        a:link, a:visited {
+            display: block;
+            width: 120px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #bebebe;
+            text-align: center;
+            padding: 4px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        a:hover, a:active {
+            background-color: #cc0000;
+        }
+
         table, th, td {
             border: 1px solid black;
             text-align: left;
@@ -14,29 +45,46 @@
     </script>
 </head>
 <body>
-<h1>Bands</h1>
-<table>
-    <tr>
-        <td>Owner</td>
-        <td>Bandname</td>
-    </tr>
-    {% for owner, band in bands.items() %}
-        {% if owner != "0" %}
-            {% for bandname in band %}
-                <tr>
-                    <td>{{ owner }}</td>
-                    <td><a href="/view/{{ owner }}/{{ bandname }}">{{ bandname }}</a></td>
-                </tr>
-            {% endfor %}
-        {% endif %}
-    {% endfor %}
+<div id="dist">
+    <ul>
+        <li><a href="/index">Home</a></li>
+        <li><a href="/new">Create band</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+    <br/>
+    <h1>Others' Public Bands</h1>
+    <table>
+        <tr>
+            <td>Owner</td>
+            <td>Bandname</td>
+            <td>View</td>
+        </tr>
 
-</table>
-<br/>
-<button onclick="window.location.href='/edit'">Refresh</button>
-&nbsp;&nbsp;
-<button onclick="window.location.href='/index'">Back</button>
+        {% for owner, band in bands.items() %}
+            {% if owner != "0" %}
+                {% for bandname in band %}
+                    <tr>
+                        <td>{{ owner }}</td>
+                        <td>{{ bandname }}</td>
+                        <td>
+                            <button onclick="window.location.href='/view/{{ owner }}/{{ bandname }}'">View</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </table>
+    <br/>
 
+    {% if "0" in bands.keys() %}
+        <b>No Public bands!</b>
+        <br/><br/>
+    {% endif %}
+
+    <button onclick="window.location.href='/edit'">Refresh</button>
+    &nbsp;&nbsp;
+    <button onclick="window.location.href='/index'">Back</button>
+</div>
 </body>
 </html>
 
