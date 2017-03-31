@@ -36,6 +36,7 @@ app.cost = {'Blaster': 5, 'Needle Gun': 12, 'Blade': 3, 'Cannon': 15, 'Whip': 5}
 app.login_name = ""
 
 
+# login function
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if not os.path.isdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users")):
@@ -59,6 +60,7 @@ def login():
         return redirect(url_for('edit_warband'))
 
 
+# register function
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     loadedusers = pickle.load(
@@ -77,6 +79,7 @@ def register():
         return redirect(url_for('login'))
 
 
+#create new band function
 @app.route('/new', methods=['GET', 'POST'])
 def new_warband():
     if request.method == 'GET':
@@ -138,6 +141,7 @@ def new_warband():
                                costs=app.cost), httpcodes.CREATED
 
 
+# list current user's band function
 @app.route('/edit', methods=['GET'])
 def edit_warband():
     if request.method == 'GET':
@@ -149,6 +153,7 @@ def edit_warband():
             return render_template('bandlist.html', bands=bands), httpcodes.OK
 
 
+# find other players' public bands and write them into publicbands file
 def check_public(rootDir):
     if not os.path.isdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "bands")):
         os.mkdir(os.path.join(os.path.dirname(os.path.realpath(__file__)), "bands"))
@@ -183,6 +188,7 @@ def check_public(rootDir):
                      "wb"))
 
 
+# list other players' public bands function
 @app.route('/view', methods=['GET'])
 def view_warband():
     if request.method == 'GET':
@@ -196,6 +202,7 @@ def view_warband():
             return render_template('viewlist.html', bands=bands), httpcodes.OK
 
 
+# display the detailed information of other players' public bands
 @app.route('/view/<user>/<band>', methods=['GET'])
 def view_given_warband(user, band):
     if request.method == 'GET':
@@ -212,6 +219,7 @@ def view_given_warband(user, band):
                                    weaps=app.weapon), httpcodes.OK
 
 
+# edit existing band
 @app.route('/edit/<band>', methods=['GET', 'POST'])
 def edit_given_warband(band):
     if request.method == 'GET':
@@ -315,6 +323,7 @@ def edit_given_warband(band):
                                weaps=app.weapon, costs=app.cost), httpcodes.OK
 
 
+# delete existing bands
 @app.route('/delete/<band>', methods=['GET'])
 def delete_given_warband(band):
     if request.method == 'GET':
@@ -326,6 +335,7 @@ def delete_given_warband(band):
             return redirect(url_for('edit_warband'))
 
 
+# logout function
 @app.route('/logout', methods=['GET'])
 def logout():
     if request.method == 'GET':
