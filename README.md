@@ -19,10 +19,12 @@ The steps to install virtualenv tool and flask:
 7. activate virtualenv, input: source venv/bin/activate 
 8. input: pip install flask
 
-Then clone this repository into the virtual environment (FGWarband folder) using command: git clone https://github.com/lwyyy/SD_Assessment.git
+Then clone this repository into the virtual environment (FGWarband folder) using command: 
+git clone https://github.com/lwyyy/SD_Assessment.git
 
 Next, go into SD_Assessment folder under the FGWarband folder and run the code using command: python framewrok.py
-this should result in the following line being displayed:
+
+This should result in the following line being displayed:
  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 
 After that, using a browser navigate to http://localhost:5000/ to see the application interface.
