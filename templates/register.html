@@ -4,13 +4,9 @@
     <title>FG Warband Register</title>
 
     <style type="text/css">
-        #dist {
-            margin-left: 40px;
-        }
-
         i {
-            font-size:12px;
-            color:#FF0000;
+            font-size: 12px;
+            color: #000000;
         }
 
         td {
@@ -87,14 +83,15 @@
 
                 document.body.appendChild(form);
                 form.submit();
+                alert("Register successfully!");
             } else {
-                alert("Sorry, password check your input information");
+                alert("Sorry, please check your input information");
             }
         }
     </script>
 </head>
 <body>
-<div id="dist">
+<div align="center">
     <h1>FG Warband Register</h1>
 
     <table id='registerTable'>

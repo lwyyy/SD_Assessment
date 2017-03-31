@@ -1,9 +1,8 @@
 import httpcodes
-import logging
 import json
 import os
 import pickle
-from flask import Flask, request, render_template, redirect, g, send_from_directory, url_for
+from flask import Flask, request, render_template, redirect, url_for
 
 # Create exportable app
 app = Flask(__name__)
@@ -75,7 +74,7 @@ def register():
         pickle.dump(loadedusers,
                     open(os.path.join(os.path.join(os.path.dirname(os.path.realpath(__file__)), "users"), "usersfile"),
                          "wb"))
-        return render_template('register.html', users=loadedusers), httpcodes.CREATED
+        return redirect(url_for('login'))
 
 
 @app.route('/new', methods=['GET', 'POST'])

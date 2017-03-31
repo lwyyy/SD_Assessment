@@ -2,18 +2,14 @@
 <html>
 <head>
     <title>FG Warband</title>
-    <style type="text/css">
-        #dist {
-            margin-left: 40px;
-        }
-    </style>
+
     <script type="text/javascript">
 
         function doFormSubmit() {
 
             var user_name = document.getElementById("username").value;
             var password = document.getElementById("password").value;
-            var flag = 0;
+            var flag;
 
             flag = 0;
             {% for name, pass in users.items() %}
@@ -55,7 +51,8 @@
     </script>
 </head>
 <body>
-<div id="dist">
+<div align="center">
+    <br/>
     <h1> FG Warband Manager </h1>
     <p>
         <i>Please login if you have account.</i>
